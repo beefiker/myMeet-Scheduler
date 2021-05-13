@@ -12,20 +12,24 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,7 +37,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class detailActivity extends AppCompatActivity {
+public class detailActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener{
+
+    static int STATIC_ID = 0;
+
     EditText editName, editCode, editTime, editContent;
     Button btnUpdate, addReview;
     Switch editActivation;
@@ -43,7 +50,8 @@ public class detailActivity extends AppCompatActivity {
     ActionBar.LayoutParams layoutparams;
     Typeface[] sCoreDreams = new Typeface[9];
 
-    static int STATIC_ID = 0;
+    String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+    int selectedDay = 0;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -52,11 +60,27 @@ public class detailActivity extends AppCompatActivity {
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
+
+        Spinner spinner = (Spinner) findViewById(R.id.daySpin);
+        ArrayAdapter<String> adpter = new ArrayAdapter<String>(getApplicationContext(), R.layout.textview, days);
+        spinner.setAdapter(adpter);
+        spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
+        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+        Drawable spinnerDrawable = spinner.getBackground().getConstantState().newDrawable();
+
+        spinnerDrawable.setColorFilter(getResources().getColor(R.color.blueblue), PorterDuff.Mode.SRC_ATOP);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            spinner.setBackground(spinnerDrawable);
+        }else{
+            spinner.setBackgroundDrawable(spinnerDrawable);
+        }
 
         layoutContainer = findViewById(R.id.layoutContainer);
         editContent = findViewById(R.id.editContent);
@@ -94,6 +118,9 @@ public class detailActivity extends AppCompatActivity {
         time = cursor.getString(4);
         activation = cursor.getString(5);
 
+
+        spinner.setSelection(day);
+
         layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
         textview.setLayoutParams(layoutparams);
         textview.setText(name);
@@ -115,7 +142,11 @@ public class detailActivity extends AppCompatActivity {
 
         editName.setText(name);
         editCode.setText(code);
-        editTime.setText(time);
+
+        String time1 = time.toString().substring(0,2);
+        String time2 = time.toString().substring(2);
+        editTime.setText(time1 + ":" + time2);
+
         if (activation.equals("true")) {
             editActivation.setChecked(true);
         } else {
@@ -130,12 +161,7 @@ public class detailActivity extends AppCompatActivity {
                 int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
                 int minute = myCalendar.get(Calendar.MINUTE);
                 TimePickerDialog timePickerDialog = new TimePickerDialog(detailActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar,
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                editTime.setText(hourOfDay + ":" + minute);
-                            }
-                        }, hour, minute, true);
+                        (view, hourOfDay, minute1) -> editTime.setText(hourOfDay + ":" + minute1), hour, minute, true);
                 timePickerDialog.show();
             }
         });
@@ -143,10 +169,12 @@ public class detailActivity extends AppCompatActivity {
         btnUpdate.setOnClickListener(view -> {
             String updateName = editName.getText().toString();
             String updateCode = editCode.getText().toString();
-            String updateTime = editTime.getText().toString();
             String updateAct = editActivation.getText().toString();
+            int updateDay = spinner.getSelectedItemPosition();
+            String updateTime = editTime.getText().toString().replaceAll(":","");
+            updateTime = updateTime.length() == 3 ? "0"+updateTime : updateTime;
             sqlDB = myHelper.getWritableDatabase();
-            sqlDB.execSQL("update scheduleTable set course = '"+updateName+"', code = '"+updateCode+"', alarmTime = '"+updateTime+"', activation = '"+updateAct+"'  where id = '"+ thisId +"' ");
+            sqlDB.execSQL("update scheduleTable set day = '"+updateDay+"', course = '"+updateName+"', code = '"+updateCode+"', alarmTime = '"+updateTime+"', activation = '"+updateAct+"'  where id = '"+ thisId +"' ");
             sqlDB.close();
             Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent1);
@@ -171,6 +199,7 @@ public class detailActivity extends AppCompatActivity {
         showMemos();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "RtlHardcoded"})
     public void showMemos(){
 
@@ -179,36 +208,43 @@ public class detailActivity extends AppCompatActivity {
         String memoContent = "";
         String memoRegdate = "";
         sqlDB = myHelper.getReadableDatabase();
-        Cursor cursor1 = sqlDB.rawQuery("select * from memoTable where num = " + STATIC_ID, null);
+//        Cursor cursor1 = sqlDB.rawQuery("select * from memoTable where num = " + STATIC_ID, null);
+        Cursor cursor1 = sqlDB.rawQuery("select * from memoTable where num = + '"+STATIC_ID+"'  order by regdate desc", null);
         while(cursor1.moveToNext()){
             memoId = cursor1.getInt(1);
             memoContent = cursor1.getString(2);
             memoRegdate = cursor1.getString(3);
 
-
             LinearLayout hLayout = new LinearLayout(getApplicationContext());
             LinearLayout.LayoutParams hLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            hLayoutParams.setMargins(0, 0, 0, 40);
+            hLayout.setPadding(30, 0, 30, 0);
             hLayout.setLayoutParams(hLayoutParams);
+            hLayout.setElevation(5);
+            hLayout.setMinimumHeight(170);
 
-            LinearLayout dividerLayout = new LinearLayout(getApplicationContext());
-            LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
-            dividerLayout.setBackgroundColor(R.color.grayButNotGray);
-            dividerLayout.setLayoutParams(dividerParams);
+            hLayout.setBackgroundResource(R.drawable.rounded_box);
 
-            Button tvId = new Button(getApplicationContext());
+            LinearLayout.LayoutParams LeftSideLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,1);
+            LinearLayout insidehLayoutLeftSide = new LinearLayout(getApplicationContext());
+            insidehLayoutLeftSide.setLayoutParams(LeftSideLayoutParams);
+            insidehLayoutLeftSide.setOrientation(LinearLayout.VERTICAL);
+            insidehLayoutLeftSide.setPadding(30,30,30,30);
+
+            Button btnRemoveReview = new Button(getApplicationContext());
             TextView tvContent = new TextView(getApplicationContext());
             TextView tvDate = new TextView(getApplicationContext());
             LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 4.0f);
+            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 4);
             LinearLayout.LayoutParams dateParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 4.0f);
             dateParams.setMargins(0, 0, 0, 10);
-
-            params.setMargins(50, 10, 0, 0);
-            tvId.setLayoutParams(params);
-            tvId.setTextSize(17);
-            tvId.setTextColor(Color.rgb(255, 0, 0));
-            tvId.setTypeface(sCoreDreams[7]);
-            tvId.setText("X");
+            btnParams.setMargins(30, 30, 30, 30);
+            btnRemoveReview.setLayoutParams(btnParams);
+            btnRemoveReview.setBackgroundResource(R.drawable.rounded_box_lightgray);
+            btnRemoveReview.setTextSize(17);
+            btnRemoveReview.setTextColor(Color.rgb(255, 0, 0));
+            btnRemoveReview.setTypeface(sCoreDreams[7]);
+            btnRemoveReview.setText("X");
 
             tvContent.setLayoutParams(contentParams);
             tvContent.setTextSize(11);
@@ -219,32 +255,43 @@ public class detailActivity extends AppCompatActivity {
             tvContent.setText(memoContent);
 
             tvDate.setLayoutParams(dateParams);
-            tvDate.setTextSize(9);
+            tvDate.setTextSize(7);
             tvDate.setTextColor(Color.rgb(33,37,41));
             tvDate.setGravity(Gravity.LEFT);
-            tvDate.setTypeface(sCoreDreams[3]);
+            tvDate.setTypeface(sCoreDreams[2]);
             tvDate.setText(memoRegdate);
 
             int finalMemoId = memoId;
-            tvId.setOnClickListener(view -> {
+            btnRemoveReview.setOnClickListener(view -> {
                 sqlDB = myHelper.getWritableDatabase();
                 sqlDB.execSQL("delete from memoTable where id = '"+ finalMemoId +"'");
                 sqlDB.close();
 
-                Toast.makeText(this, "삭제된 메모 : " + finalMemoId, Toast.LENGTH_SHORT).show();
                 showMemos();
             });
 
-            hLayout.addView(tvContent);
-            hLayout.addView(tvId);
+            insidehLayoutLeftSide.addView(tvDate);
+            insidehLayoutLeftSide.addView(tvContent);
+
+            hLayout.addView(insidehLayoutLeftSide);
+            hLayout.addView(btnRemoveReview);
 
             layoutContainer.addView(hLayout);
-            layoutContainer.addView(tvDate);
-            layoutContainer.addView(dividerLayout);
+
 
         }
         cursor1.close();
         sqlDB.close();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     public static class myDBHelper extends SQLiteOpenHelper {

@@ -16,20 +16,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="5dp"
+            android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:text="NAME"
+                android:textSize="14dp"
+                android:textStyle="bold"
                 android:textColor="@color/darkyButNotDark"/>
             <EditText
                 android:id="@+id/editName"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_weight="1"
-                android:paddingLeft="10dp"
+                android:layout_margin="5dp"
+                android:paddingHorizontal="10dp"
+                android:background="@drawable/rounded_box"
                 android:layout_height="wrap_content"
+                android:minHeight="35dp"
+                android:elevation="2dp"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
                 android:hint="Name" />
@@ -37,20 +44,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="5dp"
+            android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:text="Code"
+                android:textSize="14dp"
+                android:textStyle="bold"
                 android:textColor="@color/darkyButNotDark"/>
             <EditText
                 android:id="@+id/editCode"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_weight="1"
-                android:paddingLeft="10dp"
+                android:layout_margin="5dp"
+                android:paddingHorizontal="10dp"
+                android:background="@drawable/rounded_box"
                 android:layout_height="wrap_content"
+                android:minHeight="35dp"
+                android:elevation="2dp"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
                 android:hint="Code" />
@@ -58,36 +72,83 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="5dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
+                android:paddingLeft="15dp"
+                android:textSize="14dp"
+                android:textStyle="bold"
                 android:text="Time"
                 android:textColor="@color/darkyButNotDark"/>
             <EditText
                 android:id="@+id/editTime"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_weight="1"
-                android:paddingLeft="10dp"
+                android:layout_margin="5dp"
+                android:paddingHorizontal="10dp"
+                android:background="@drawable/rounded_box"
                 android:layout_height="wrap_content"
+                android:minHeight="35dp"
+                android:elevation="2dp"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
                 android:hint="Time" />
         </LinearLayout>
 
-        <Switch
-            android:id="@+id/editActivation"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:checked="false"
-            android:textColorHint="@color/darkyButNotDark"
-            android:track="@drawable/switch_track_selector"
-            android:thumb="@drawable/switch_thumb"
-            android:hint="알람 설정 "
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            android:gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Alarm"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/darkyButNotDark"/>
+            <Switch
+                android:id="@+id/editActivation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginLeft="15dp"
+                android:checked="false"
+                android:textColorHint="@color/darkyButNotDark"
+                android:track="@drawable/switch_track_selector"
+                android:thumb="@drawable/switch_thumb"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Day of week"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/darkyButNotDark"/>
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:popupBackground="#f1f3f5"
+                android:layout_weight="1"
+                android:spinnerMode="dropdown"
+                android:id="@+id/daySpin" />
+        </LinearLayout>
+
         <Button
             android:id="@+id/btnUpdate"
             android:layout_margin="10dp"
@@ -122,7 +183,7 @@
                 android:background="@drawable/rounded_box"
                 android:layout_width="match_parent"
                 android:layout_margin="1dp"
-                android:layout_height="40dp"
+                android:layout_height="30dp"
                 android:textColor="@color/black"
                 android:text="Add"
                 android:layout_weight="4" />

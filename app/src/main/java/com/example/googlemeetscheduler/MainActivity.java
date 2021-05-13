@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
             schTime.setTypeface(sCoreDreams[4]);
             schTime.setTextColor(Color.rgb(112,112,121));
 
-            arrDeletes.get(count).setImageResource(R.drawable.ic_baseline_delete_24);
+            arrDeletes.get(count).setImageResource(R.drawable.ic_baseline_delete_forever_24);
             arrDeletes.get(count).setBackgroundResource(R.color.trans);
             arrDeletes.get(count).setId(thisId);
             arrDeletes.get(count).setLayoutParams(paramsRIGHT);

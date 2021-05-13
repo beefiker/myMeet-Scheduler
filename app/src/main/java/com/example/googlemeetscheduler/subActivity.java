@@ -58,7 +58,6 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
         setContentView(R.layout.subactivity_main);
 
         Spinner spinner = (Spinner) findViewById(R.id.daySpin);
-
         ArrayAdapter<String> adpter = new ArrayAdapter<String>(getApplicationContext(), R.layout.textview, days);
         spinner.setAdapter(adpter);
         spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
