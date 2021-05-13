@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="#f1f3f5"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:elevation="10dp"
+        android:background="@drawable/rounded_container">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="NAME"
+                android:textColor="@color/darkyButNotDark"/>
+            <EditText
+                android:id="@+id/editName"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/grayButNotGray"
+                android:textColor="@color/darkyButNotDark"
+                android:hint="Name" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Code"
+                android:textColor="@color/darkyButNotDark"/>
+            <EditText
+                android:id="@+id/editCode"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/grayButNotGray"
+                android:textColor="@color/darkyButNotDark"
+                android:hint="Code" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Time"
+                android:textColor="@color/darkyButNotDark"/>
+            <EditText
+                android:id="@+id/editTime"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/grayButNotGray"
+                android:textColor="@color/darkyButNotDark"
+                android:hint="Time" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/editActivation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:checked="false"
+            android:textColorHint="@color/darkyButNotDark"
+            android:hint="알람 설정 "
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+        <Button
+            android:id="@+id/btnUpdate"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/darkyButNotDark"
+            android:elevation="10dp"
+            android:background="@drawable/rounded_box"
+            android:text="update" />
+    </LinearLayout>
+
+</LinearLayout>
