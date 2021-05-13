@@ -92,10 +92,56 @@
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/darkyButNotDark"
+            android:textColor="@color/white"
             android:elevation="10dp"
-            android:background="@drawable/rounded_box"
+            android:background="@drawable/rounded_box_blue"
             android:text="update" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:elevation="10dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editContent"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:textColor="@color/darkyButNotDark"
+                android:textColorHint="@color/grayButNotGray"
+                android:layout_margin="5dp"
+                android:textSize="13dp"
+                android:hint="Content"
+                android:layout_height="40dp" />
+
+            <Button
+                android:id="@+id/addReview"
+                android:background="@drawable/rounded_box"
+                android:layout_width="match_parent"
+                android:layout_margin="1dp"
+                android:layout_height="40dp"
+                android:textColor="@color/black"
+                android:text="Add"
+                android:layout_weight="4" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbarThumbVertical="@color/grayButNotGray"
+            android:scrollbars="vertical">
+            <LinearLayout
+                android:id="@+id/layoutContainer"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 
 </LinearLayout>

@@ -26,9 +26,14 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,18 +56,15 @@ public class MainActivity extends AppCompatActivity {
     int count = 0;
     String scheduleId, scheduleName, scheduleCode, scheduleTime, scheduleActivation;
 
-
     ArrayList<ImageButton> arrDeletes = new ArrayList<>();
     LinearLayout layoutContainer;
 
     myDBHelper myHelper;
     SQLiteDatabase sqlDB;
 
-    Typeface[] sCoreDreams = new Typeface[9];
+    Typeface[] sCoreDreams = new Typeface[10];
 
     AlarmManager alarmManager;
-
-    static boolean isFirst = false;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -96,28 +98,46 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY AUTOINCREMENT, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
+            db.execSQL("create table memoTable (num INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, regdate TEXT)");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL("drop table if exists scheduleTable");
+            db.execSQL("drop table if exists memoTable");
             onCreate(db);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        menu.add(0, 1, 0, "New Schedule");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_option, menu);
+        int positionOfMenuItem = 0; // or whatever...
+        MenuItem item = menu.getItem(positionOfMenuItem);
+        SpannableString s = new SpannableString("+");
+        s.setSpan(new AbsoluteSizeSpan(90), 0, s.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        s.setSpan(new ForegroundColorSpan(Color.rgb(26,144,236)), 0, s.length(), 0);
+        item.setTitle(s);
+
+        int positionOfMenuItem2 = 1; // or whatever...
+        MenuItem item2 = menu.getItem(positionOfMenuItem2);
+        SpannableString s2 = new SpannableString("Refresh");
+        s2.setSpan(new ForegroundColorSpan(Color.rgb(26,144,236)), 0, s2.length(), 0);
+        item2.setTitle(s2);
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case 1:
+            case R.id.menu1:
                 Intent intent = new Intent(getApplicationContext(), subActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.menu2:
+                showLists();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -140,8 +160,6 @@ public class MainActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         final Intent myIntent = new Intent(this, AlarmReceiver.class);
 
-        final int idm = (int) System.currentTimeMillis();
-
         Calendar calendar = new GregorianCalendar();
 
         layoutContainer.removeAllViews();
@@ -151,29 +169,28 @@ public class MainActivity extends AppCompatActivity {
         while(cursor.moveToNext()){
             final int thisId = cursor.getInt(0);
             scheduleId = cursor.getString(0);
+//            final int day = cursor.getInt(1);
             scheduleName = cursor.getString(1);
             scheduleCode = cursor.getString(2);
             scheduleTime = cursor.getString(3);
             scheduleActivation = cursor.getString(4);
 
+            int schHour = 0;
+            int schMin = 0;
+
+
             String[] schHourMin = scheduleTime.split(":");
-            int schHour, schMin;
-//            if(schHourMin.length == 2){
-                schHour = Integer.parseInt(schHourMin[0]);
+            if(schHourMin.length > 1){
                 schMin = Integer.parseInt(schHourMin[1]);
-//            }else if(schHourMin.length == 1){
-//                schHour = Integer.parseInt(schHourMin[0]);
-//                schMin = 0;
-//            }else{
-//                schHour = 0;
-//                schMin = 0;
-//            }
+            }else if(schHourMin.length > 0){
+                schHour = Integer.parseInt(schHourMin[0]);
+                schMin = 0;
+            }
 
             RelativeLayout.LayoutParams Lparams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             Lparams.setMargins(5, 10, 5, 30);
             RelativeLayout hLayout = new RelativeLayout(this);
             hLayout.setPadding(30, 20, 30, 20);
-//            hLayout.setBackgroundColor(getResources().getColor(R.color.darky));
 
             // F8F9FA 헤더 색
             GradientDrawable shape = new GradientDrawable();
@@ -209,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
             schTime.setId(thisId+100000);
             schTime.setLayoutParams(paramsLEFT);
+
 
             RelativeLayout.LayoutParams paramsCENTER = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             paramsCENTER.setMargins(50, 10, 0, 0);
@@ -259,6 +277,9 @@ public class MainActivity extends AppCompatActivity {
                 myIntent.putExtra("scheduleName", scheduleName);
                 myIntent.putExtra("scheduleCode", scheduleCode);
                 myIntent.putExtra("scheduleTime", scheduleTime);
+                PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_ONE_SHOT);
+                alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
+
             }else{
                 myIntent.putExtra("state", "off");
                 cancelAlarm(thisId);
@@ -267,20 +288,17 @@ public class MainActivity extends AppCompatActivity {
             // thisID 고유한 값으로 펜딩인텐트 생성
             PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_ONE_SHOT);
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
-
             aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 sqlDB = myHelper.getWritableDatabase();
                     if(isChecked){
                         sqlDB.execSQL("update scheduleTable set activation = '"+true+"' where id = '"+ thisId +"'");
-                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
-                        Toast.makeText(this,  "앱인텐트 : " + appIntent + "\n활성화 id : " + thisId, Toast.LENGTH_SHORT).show();
+                        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
+//                        Toast.makeText(this,  "앱인텐트 : " + appIntent + "\n활성화 id : " + thisId, Toast.LENGTH_SHORT).show();
                     }else{
                         // 펜딩인텐트 삭제
                         cancelAlarm(thisId);
-
+//                        Toast.makeText(this, "앱인텐트 : " + appIntent  + "\n삭제할 id : " + thisId, Toast.LENGTH_SHORT).show();
                         sqlDB.execSQL("update scheduleTable set activation = '"+false+"' where id = '"+ thisId +"'");
-                        Toast.makeText(this, "앱인텐트 : " + appIntent  + "\n삭제할 id : " + thisId, Toast.LENGTH_SHORT).show();
                     }
                 sqlDB.close();
             });
@@ -288,20 +306,21 @@ public class MainActivity extends AppCompatActivity {
             arrDeletes.get(count).setOnClickListener(view -> {
                 sqlDB = myHelper.getWritableDatabase();
                 sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
+                sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
                 sqlDB.close();
 
                 // 해당 펜딩 인덴트 삭제
                 cancelAlarm(thisId);
-                Toast.makeText(this, "삭제된 앱인텐트 : " + appIntent, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, scheduleName+" Deleted", Toast.LENGTH_SHORT).show();
                 showLists();
             });
 
             hLayout.setOnClickListener(view -> {
-                Toast.makeText(this, "클릭" + thisId, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), detailActivity.class);
                 intent.putExtra("id", thisId);
                 startActivity(intent);
             });
+
             hLayout.addView(schName);
             hLayout.addView(schCode);
             hLayout.addView(schTime);

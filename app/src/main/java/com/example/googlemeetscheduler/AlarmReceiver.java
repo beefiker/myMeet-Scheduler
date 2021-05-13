@@ -27,21 +27,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         String scheduleCode = intent.getExtras().getString("scheduleCode");
         String scheduleTime = intent.getExtras().getString("scheduleTime");
         int scheduleId = intent.getExtras().getInt("scheduleId");
-//        if(state.equals("on")){
+        if(state.equals("on")){
             Toast.makeText(context,
                     "이름 : " + scheduleName + "\n"
                             + "코드 : " + scheduleCode + "\n"
                             + "시간 : " + scheduleTime + "\n"
                             + "아이디 : " + scheduleId + "\n",
                     Toast.LENGTH_LONG).show();
-//        }
-        System.out.println(now() + "scheduleId = " + scheduleId + "알람");
-//        Toast.makeText(context, "앱인텐 : " + component1+ "\n아이디 : "+component2+"\n이름 : "+ scheduleName + "\n코드 : " + scheduleCode +"\n시간 : " + scheduleTime, Toast.LENGTH_LONG).show();
-//        Toast.makeText(context, "컴포넌트1: " + component1 + "\n네임 : " + scheduleName +"\nIDM : " + component2,  Toast.LENGTH_LONG).show();
-
-
-//        this.context = context;
-
+        }
 //
 
 //
