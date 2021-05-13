@@ -11,7 +11,7 @@
     <color name="blueblue">#1A72EC</color>
     <color name="darky">#0F1218</color>
     <color name="trans">#00000000</color>
-    <color name="darkyButNotDark">#212121</color>
+    <color name="darkyButNotDark">#343434</color>
     <color name="grayButNotGray">#C9CBCB</color>
 
 </resources>

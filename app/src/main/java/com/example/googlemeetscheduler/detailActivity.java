@@ -77,6 +77,7 @@ public class detailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", 0);
+        int day = 0;
         String nid = "", name = "", code = "", time = "";
         String activation = "false";
 
@@ -87,10 +88,11 @@ public class detailActivity extends AppCompatActivity {
         cursor.moveToNext();
         final int thisId = cursor.getInt(0);
         nid = cursor.getString(0);
-        name = cursor.getString(1);
-        code = cursor.getString(2);
-        time = cursor.getString(3);
-        activation = cursor.getString(4);
+        day = cursor.getInt(1);
+        name = cursor.getString(2);
+        code = cursor.getString(3);
+        time = cursor.getString(4);
+        activation = cursor.getString(5);
 
         layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
         textview.setLayoutParams(layoutparams);

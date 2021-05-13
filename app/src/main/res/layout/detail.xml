@@ -84,6 +84,8 @@
             android:padding="10dp"
             android:checked="false"
             android:textColorHint="@color/darkyButNotDark"
+            android:track="@drawable/switch_track_selector"
+            android:thumb="@drawable/switch_thumb"
             android:hint="알람 설정 "
             tools:ignore="UseSwitchCompatOrMaterialXml" />
         <Button

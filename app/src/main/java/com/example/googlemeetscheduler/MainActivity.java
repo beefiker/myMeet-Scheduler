@@ -3,6 +3,7 @@ package com.example.googlemeetscheduler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -57,21 +58,32 @@ public class MainActivity extends AppCompatActivity {
     String scheduleId, scheduleName, scheduleCode, scheduleTime, scheduleActivation;
 
     ArrayList<ImageButton> arrDeletes = new ArrayList<>();
+    ArrayList<TextView> arrCodes = new ArrayList<>();
     LinearLayout layoutContainer;
 
     myDBHelper myHelper;
     SQLiteDatabase sqlDB;
 
-    Typeface[] sCoreDreams = new Typeface[10];
+    Typeface[] sCoreDreams = new Typeface[9];
 
     AlarmManager alarmManager;
+    ActionBar.LayoutParams layoutparams;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle("GoogleMeetScheduler");
+        ActionBar actionbar = getSupportActionBar();
+        TextView textview = new TextView(getApplicationContext());
+        layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        textview.setLayoutParams(layoutparams);
+        textview.setText("GoogleMeetScheduler");
+        textview.setTextColor(Color.rgb(33,33,33));
+        textview.setTypeface(sCoreDreams[2], Typeface.BOLD);
+        textview.setTextSize(19);
+        actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionbar.setCustomView(textview);
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
 
@@ -97,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY AUTOINCREMENT, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
+            db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY AUTOINCREMENT, day INTEGER, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
             db.execSQL("create table memoTable (num INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, regdate TEXT)");
         }
 
@@ -147,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
     private void cancelAlarm(int thisId) {
 
         Intent myIntent = new Intent(this, AlarmReceiver.class);
-//        PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT);
         PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         appIntent.cancel();
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -164,21 +175,19 @@ public class MainActivity extends AppCompatActivity {
 
         layoutContainer.removeAllViews();
         sqlDB = myHelper.getReadableDatabase();
-        Cursor cursor = sqlDB.rawQuery("select * from scheduleTable;", null);
+        Cursor cursor = sqlDB.rawQuery("select * from scheduleTable order by day, alarmTime", null);
 
         while(cursor.moveToNext()){
             final int thisId = cursor.getInt(0);
             scheduleId = cursor.getString(0);
-//            final int day = cursor.getInt(1);
-            scheduleName = cursor.getString(1);
-            scheduleCode = cursor.getString(2);
-            scheduleTime = cursor.getString(3);
-            scheduleActivation = cursor.getString(4);
+            int day = cursor.getInt(1);
+            scheduleName = cursor.getString(2);
+            scheduleCode = cursor.getString(3);
+            scheduleTime = cursor.getString(4);
+            scheduleActivation = cursor.getString(5);
 
             int schHour = 0;
             int schMin = 0;
-
-
             String[] schHourMin = scheduleTime.split(":");
             if(schHourMin.length > 1){
                 schMin = Integer.parseInt(schHourMin[1]);
@@ -192,24 +201,25 @@ public class MainActivity extends AppCompatActivity {
             RelativeLayout hLayout = new RelativeLayout(this);
             hLayout.setPadding(30, 20, 30, 20);
 
-            // F8F9FA 헤더 색
             GradientDrawable shape = new GradientDrawable();
             shape.setColor(Color.rgb(234, 236, 243));
             shape.setCornerRadius(20);
             hLayout.setGravity(Gravity.LEFT);
             hLayout.setBackground(shape);
-            hLayout.setElevation(10);
+            hLayout.setElevation(11);
             hLayout.setLayoutParams(Lparams);
             layoutContainer.addView(hLayout);
 
             TextView schName = new TextView(this);
             TextView schCode = new TextView(this);
             TextView schTime = new TextView(this);
+            TextView schDay = new TextView(this);
 
             @SuppressLint("UseSwitchCompatOrMaterialCode")
             Switch aSwitch = new Switch(this);
 
             arrDeletes.add(new ImageButton(this));
+            arrCodes.add(schCode);
 
             RelativeLayout.LayoutParams paramsLEFT = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             paramsLEFT.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -220,13 +230,10 @@ public class MainActivity extends AppCompatActivity {
             paramsRIGHT.addRule(RelativeLayout.CENTER_VERTICAL);
 
             schName.setTextSize(18);
-//            schName.setTextColor(getResources().getColor(R.color.goldenYellow));
-            schName.setTextColor(Color.rgb(26,114,236));
             schName.setTypeface(sCoreDreams[5]);
 
             schTime.setId(thisId+100000);
             schTime.setLayoutParams(paramsLEFT);
-
 
             RelativeLayout.LayoutParams paramsCENTER = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             paramsCENTER.setMargins(50, 10, 0, 0);
@@ -238,10 +245,17 @@ public class MainActivity extends AppCompatActivity {
             params.addRule(RelativeLayout.ALIGN_BOTTOM, schTime.getId());
             params.setMargins(50, 10, 0, 0);
 
-            schCode.setLayoutParams(params);
-            schCode.setTextSize(12);
-            schCode.setTextColor(Color.rgb(33,37,41));
-            schCode.setTypeface(sCoreDreams[3]);
+            RelativeLayout.LayoutParams dayParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            dayParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            dayParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            schDay.setLayoutParams(dayParams);
+            schDay.setTextSize(9);
+            schDay.setTypeface(sCoreDreams[6]);
+
+            arrCodes.get(count).setLayoutParams(params);
+            arrCodes.get(count).setTextSize(12);
+            arrCodes.get(count).setTextColor(Color.rgb(33,37,41));
+            arrCodes.get(count).setTypeface(sCoreDreams[3]);
 
             schTime.setTextSize(30);
             schTime.setTypeface(sCoreDreams[4]);
@@ -259,11 +273,54 @@ public class MainActivity extends AppCompatActivity {
             aSwitch.setLayoutParams(switchParam);
             aSwitch.setHighlightColor(getResources().getColor(R.color.goldenYellow));
             aSwitch.setChecked(scheduleActivation.equals("true"));
+            aSwitch.setTrackResource(R.drawable.switch_track_selector);
+            aSwitch.setThumbResource(R.drawable.switch_thumb);
 
             schName.setText(scheduleName);
-            schCode.setText(scheduleCode);
-            schTime.setText(scheduleTime);
+            arrCodes.get(count).setText(scheduleCode);
 
+            String time1 = scheduleTime.substring(0,2);
+            String time2 = scheduleTime.substring(2);
+            schTime.setText(time1 + ":" + time2);
+
+            switch(day){
+                case 0:
+                    schDay.setText("MON");
+                    schDay.setTextColor(Color.argb(180, 239,71,111));
+                    schName.setTextColor(Color.argb(180, 239,71,111));
+                    break;
+                case 1:
+                    schDay.setText("TUE");
+                    schDay.setTextColor(Color.argb(255, 255,209,102));
+                    schName.setTextColor(Color.argb(255, 255,209,102));
+                    break;
+                case 2:
+                    schDay.setText("WED");
+                    schDay.setTextColor(Color.argb(180, 6,214,160));
+                    schName.setTextColor(Color.argb(180, 6,214,160));
+                    break;
+                case 3:
+                    schDay.setText("THU");
+                    schDay.setTextColor(Color.argb(180, 17,138,178));
+                    schName.setTextColor(Color.argb(180, 17,138,178));
+                    break;
+                case 4:
+                    schDay.setText("FRI");
+                    schDay.setTextColor(Color.argb(180,  7,59,78));
+                    schName.setTextColor(Color.argb(180,  7,59,78));
+                    break;
+                case 5:
+                    schDay.setText("SAT");
+                    schDay.setTextColor(Color.argb(180, 244,162,97));
+                    schName.setTextColor(Color.argb(180, 244,162,97));
+                    break;
+                default:
+                    schDay.setText("SUN");
+                    schDay.setTextColor(Color.argb(180, 231,111,81));
+                    schName.setTextColor(Color.argb(180, 231,111,81));
+                    break;
+
+            }
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
@@ -303,6 +360,12 @@ public class MainActivity extends AppCompatActivity {
                 sqlDB.close();
             });
 
+            final String scCode = scheduleCode;
+            arrCodes.get(count).setOnClickListener(view -> {
+                Uri parse = Uri.parse("https://meet.google.com/"+scCode);
+                Intent intent = new Intent(Intent.ACTION_VIEW, parse);
+                startActivity(intent);
+            });
             arrDeletes.get(count).setOnClickListener(view -> {
                 sqlDB = myHelper.getWritableDatabase();
                 sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
@@ -311,7 +374,6 @@ public class MainActivity extends AppCompatActivity {
 
                 // 해당 펜딩 인덴트 삭제
                 cancelAlarm(thisId);
-                Toast.makeText(this, scheduleName+" Deleted", Toast.LENGTH_SHORT).show();
                 showLists();
             });
 
@@ -322,8 +384,9 @@ public class MainActivity extends AppCompatActivity {
             });
 
             hLayout.addView(schName);
-            hLayout.addView(schCode);
+            hLayout.addView(arrCodes.get(count));
             hLayout.addView(schTime);
+            hLayout.addView(schDay);
             hLayout.addView(aSwitch);
             hLayout.addView(arrDeletes.get(count));
 

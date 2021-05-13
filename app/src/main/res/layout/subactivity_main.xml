@@ -23,6 +23,8 @@
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkyButNotDark"
+                android:textSize="14dp"
+                android:textStyle="bold"
                 android:text="수업이름 : " />
             <EditText
                 android:layout_width="match_parent"
@@ -45,6 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:textColor="@color/darkyButNotDark"
+                android:textSize="14dp"
+                android:textStyle="bold"
                 android:text="수업시간 : " />
 
             <EditText
@@ -70,6 +74,8 @@
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkyButNotDark"
+                android:textSize="14dp"
+                android:textStyle="bold"
                 android:text="수업코드 : " />
 
             <EditText
@@ -83,26 +89,32 @@
 
         </LinearLayout>
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="15dp"-->
-<!--            android:orientation="horizontal">-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:orientation="horizontal">
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_weight="4"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:textColor="@color/darkyButNotDark"-->
-<!--                android:text="요일 : " />-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:textColor="@color/darkyButNotDark"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:text="수업요일 : " />
 
-<!--            <Spinner-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:id="@+id/daySpinner" />-->
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:popupBackground="#f1f3f5"
+                android:layout_weight="1"
+                android:spinnerMode="dropdown"
+                android:id="@+id/daySpin" />
 
-<!--        </LinearLayout>-->
+        </LinearLayout>
 
         <Button
             android:id="@+id/addSchedule"
