@@ -10,9 +10,11 @@ import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -57,7 +59,6 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     int count = 0;
-    String scheduleId, scheduleName, scheduleCode, scheduleTime, scheduleActivation;
 
     ArrayList<ImageButton> arrDeletes = new ArrayList<>();
     ArrayList<TextView> arrCodes = new ArrayList<>();
@@ -167,32 +168,27 @@ public class MainActivity extends AppCompatActivity {
     public void showLists(){
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        final Intent myIntent = new Intent(this, AlarmReceiver.class);
 
-        Calendar calendar = new GregorianCalendar();
 
         layoutContainer.removeAllViews();
         sqlDB = myHelper.getReadableDatabase();
         Cursor cursor = sqlDB.rawQuery("select * from scheduleTable order by day, alarmTime", null);
 
         while(cursor.moveToNext()){
+
+
+            final String scheduleName, scheduleCode, scheduleTime, scheduleActivation;
             final int thisId = cursor.getInt(0);
-            scheduleId = cursor.getString(0);
-            int day = cursor.getInt(1);
+            final int day = cursor.getInt(1);
             scheduleName = cursor.getString(2);
             scheduleCode = cursor.getString(3);
             scheduleTime = cursor.getString(4);
             scheduleActivation = cursor.getString(5);
 
-            int schHour = 0;
-            int schMin = 0;
-            String[] schHourMin = scheduleTime.split(":");
-            if(schHourMin.length > 1){
-                schMin = Integer.parseInt(schHourMin[1]);
-            }else if(schHourMin.length > 0){
-                schHour = Integer.parseInt(schHourMin[0]);
-                schMin = 0;
-            }
+
+            final String[] schHourMin = scheduleTime.split(":");
+            final int schHour = schHourMin.length > 0 ? Integer.parseInt(schHourMin[0]): 0;
+            final int schMin = schHourMin.length > 1 ? Integer.parseInt(schHourMin[1]) : 0;
 
             RelativeLayout.LayoutParams hLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             hLayoutParams.setMargins(5, 10, 5, 30);
@@ -360,6 +356,8 @@ public class MainActivity extends AppCompatActivity {
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
+            final Calendar calendar = new GregorianCalendar();
+            final Intent myIntent = new Intent(this, AlarmReceiver.class);
             calendar.set(Calendar.HOUR_OF_DAY, schHour);
             calendar.set(Calendar.MINUTE, schMin);
             calendar.set(Calendar.SECOND, 0);
@@ -371,26 +369,23 @@ public class MainActivity extends AppCompatActivity {
                 myIntent.putExtra("scheduleCode", scheduleCode);
                 myIntent.putExtra("scheduleTime", scheduleTime);
                 PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_ONE_SHOT);
-                alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
-
-            }else{
-                myIntent.putExtra("state", "off");
-                cancelAlarm(thisId);
+                alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
             }
 
             // thisID 고유한 값으로 펜딩인텐트 생성
+
             PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_ONE_SHOT);
 
             aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 sqlDB = myHelper.getWritableDatabase();
                     if(isChecked){
                         sqlDB.execSQL("update scheduleTable set activation = '"+true+"' where id = '"+ thisId +"'");
-                        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
-//                        Toast.makeText(this,  "앱인텐트 : " + appIntent + "\n활성화 id : " + thisId, Toast.LENGTH_SHORT).show();
+                        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
+                        Toast.makeText(this,  "앱인텐트 : " + appIntent + "\n활성화 id : " + thisId, Toast.LENGTH_SHORT).show();
                     }else{
                         // 펜딩인텐트 삭제
                         cancelAlarm(thisId);
-//                        Toast.makeText(this, "앱인텐트 : " + appIntent  + "\n삭제할 id : " + thisId, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "앱인텐트 : " + appIntent  + "\n삭제할 id : " + thisId, Toast.LENGTH_SHORT).show();
                         sqlDB.execSQL("update scheduleTable set activation = '"+false+"' where id = '"+ thisId +"'");
                     }
                 sqlDB.close();
@@ -403,14 +398,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             });
             arrDeletes.get(count).setOnClickListener(view -> {
-                sqlDB = myHelper.getWritableDatabase();
-                sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
-                sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
-                sqlDB.close();
-
-                // 해당 펜딩 인덴트 삭제
-                cancelAlarm(thisId);
-                showLists();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
+                builder.setTitle("Deletes").setMessage("Are you sure ? \nDelete " + scheduleName)
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sqlDB = myHelper.getWritableDatabase();
+                                sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
+                                sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
+                                sqlDB.close();
+                                // 해당 펜딩 인덴트 삭제
+                                cancelAlarm(thisId);
+                                showLists();
+                            }}).setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }}).show();
             });
 
             int finalColor_R = color_R;

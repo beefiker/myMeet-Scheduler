@@ -17,5 +17,8 @@
         <item name="actionMenuTextColor">@color/blueblue</item>
     </style>
 
-
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColor">#ff0000</item>
+        <item name="android:textColorPrimary">#343434</item>
+    </style>
 </resources>

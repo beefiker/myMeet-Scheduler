@@ -6,10 +6,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.SystemClock;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import static java.time.LocalDateTime.now;
@@ -34,6 +37,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             + "시간 : " + scheduleTime + "\n"
                             + "아이디 : " + scheduleId + "\n",
                     Toast.LENGTH_LONG).show();
+            System.out.println(LocalDate.now() + " : " + LocalTime.now() + "알람 : "+ scheduleName );
         }
 //
 

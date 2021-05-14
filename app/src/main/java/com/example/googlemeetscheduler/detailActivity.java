@@ -208,6 +208,7 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
                 sqlDB.execSQL("insert into memoTable(num, content, regdate) values ('" + STATIC_ID + "','" + editContent.getText().toString() + "', '" + getTime + "');");
                 sqlDB.close();
                 showMemos();
+                editContent.setText(null);
                 inputMethodManager.hideSoftInputFromWindow(editContent.getWindowToken(), 0);
             }else{
                 Toast.makeText(this, "메모를 입력해주세요", Toast.LENGTH_SHORT).show();
@@ -306,14 +307,10 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-    }
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {}
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     public static class myDBHelper extends SQLiteOpenHelper {
         public myDBHelper(@Nullable Context context) {

@@ -126,14 +126,13 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
                     if(hourMin[0].length() < 2) hourMin[0] = "0"+hourMin[0];
                     if(hourMin[1].length() < 2) hourMin[1] = "0"+hourMin[1];
                     String tmp = hourMin[0] + ":"+ hourMin[1];
-                    sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+false+"');");
+                    sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+true+"');");
                     sqlDB.close();
                     openMain();
 
                 }else if(editTime.getText().toString().equals("") && editTime.getText().toString().length() < 1){
-                    Toast.makeText(subActivity.this, "시간", Toast.LENGTH_SHORT).show();
                     sqlDB = myHelper.getWritableDatabase();
-                    sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ "00:00" +"', '"+false+"');");
+                    sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ "00:00" +"', '"+true+"');");
                     sqlDB.close();
                     openMain();
                 }else {
