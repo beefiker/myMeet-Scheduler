@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
@@ -31,6 +30,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 public class subActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     Button addSchedule;
@@ -51,44 +51,43 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
         return true;
     }
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subactivity_main);
 
-        Spinner spinner = (Spinner) findViewById(R.id.daySpin);
-        ArrayAdapter<String> adpter = new ArrayAdapter<String>(getApplicationContext(), R.layout.textview, days);
+        Spinner spinner = findViewById(R.id.daySpin);
+        ArrayAdapter<String> adpter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
         spinner.setAdapter(adpter);
         spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
-        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+        spinner.setOnItemSelectedListener(this);
         Drawable spinnerDrawable = spinner.getBackground().getConstantState().newDrawable();
 
-        spinnerDrawable.setColorFilter(getResources().getColor(R.color.blueblue), PorterDuff.Mode.SRC_ATOP);
+        spinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             spinner.setBackground(spinnerDrawable);
-        }else{
-            spinner.setBackgroundDrawable(spinnerDrawable);
         }
         for (int i = 0; i < sCoreDreams.length-1; i++){
             sCoreDreams[i] =  Typeface.createFromAsset(getAssets(), "SCDream"+(i+1)+".otf");
         }
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
         ActionBar actionbar = getSupportActionBar();
         TextView textview = new TextView(getApplicationContext());
 
         layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
         textview.setLayoutParams(layoutparams);
         textview.setText("Add Schedule");
-        textview.setTextColor(Color.rgb(33,33,33));
+        textview.setTextColor(R.color.darkyButNotDark);
         textview.setTypeface(sCoreDreams[4], Typeface.BOLD);
-        textview.setTextSize(19);
+        textview.setTextSize(17);
         actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionbar.setCustomView(textview);
 
         actionbar.setDisplayHomeAsUpEnabled(true);
+        @SuppressLint("UseCompatLoadingForDrawables")
         Drawable backArrow = getResources().getDrawable(R.drawable.ic_baseline_arrow_back_24);
         backArrow.setColorFilter(getResources().getColor(R.color.blueblue), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(backArrow);
@@ -100,34 +99,49 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
 
         myHelper = new myDBHelper(this);
 
-        editTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        editTime.setOnClickListener(view -> {
                 Calendar myCalendar = Calendar.getInstance();
                 int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
                 int minute = myCalendar.get(Calendar.MINUTE);
                 TimePickerDialog timePickerDialog = new TimePickerDialog(subActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar,
-                        new TimePickerDialog.OnTimeSetListener() {
-
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-                                editTime.setText(hourOfDay + ":" + minute);
-                            }
+                        (view1, hourOfDay, minute1) -> {
+                            String hourSet = String.valueOf(hourOfDay);
+                            String minSet = String.valueOf(minute1);
+                            if(hourSet.length() < 2) hourSet = "0" + hourSet;
+                            if(minSet.length() < 2) minSet = "0" + minSet;
+                            editTime.setText(hourSet + ":" + minSet);
                         }, hour, minute, true);
                 timePickerDialog.show();
-            }
+
         });
 
         addSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sqlDB = myHelper.getWritableDatabase();
-                String tmp = editTime.getText().toString().replaceAll(":","");
-                tmp = tmp.length() == 3 ? "0"+tmp : tmp;
-                sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+false+"');");
+                if(!editName.getText().toString().equals("") && editName.getText().toString().length() > 0 && editTime.getText().toString().length() > 0){
 
-                sqlDB.close();
+                    sqlDB = myHelper.getWritableDatabase();
+
+                    String[] hourMin = editTime.getText().toString().split(":");
+                    if(hourMin[0].length() < 2) hourMin[0] = "0"+hourMin[0];
+                    if(hourMin[1].length() < 2) hourMin[1] = "0"+hourMin[1];
+                    String tmp = hourMin[0] + ":"+ hourMin[1];
+                    sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+false+"');");
+                    sqlDB.close();
+                    openMain();
+
+                }else if(editTime.getText().toString().equals("") && editTime.getText().toString().length() < 1){
+                    Toast.makeText(subActivity.this, "시간", Toast.LENGTH_SHORT).show();
+                    sqlDB = myHelper.getWritableDatabase();
+                    sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ "00:00" +"', '"+false+"');");
+                    sqlDB.close();
+                    openMain();
+                }else {
+                    Toast.makeText(subActivity.this, "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            private void openMain() {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
@@ -145,7 +159,6 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
                         days[position].equals("금요일") ? 4 :
                         days[position].equals("토요일") ? 5 :
                         days[position].equals("일요일") ? 6 : 0;
-        Toast.makeText(this, "selected " + selectedDay, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -23,16 +23,17 @@
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkyButNotDark"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:text="수업이름 : " />
+                android:text="@string/name" />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textSize="14sp"
                 android:textColor="@color/darkyButNotDark"
                 android:textColorHint="@color/grayButNotGray"
-                android:hint="Science"
+                android:hint="@string/react_class"
                 android:id="@+id/editName" />
         </LinearLayout>
 
@@ -47,17 +48,19 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:textColor="@color/darkyButNotDark"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:text="수업시간 : " />
+                android:text="@string/time" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textSize="14sp"
                 android:textColor="@color/darkyButNotDark"
                 android:textColorHint="@color/grayButNotGray"
-                android:hint="Click to select time"
+                android:focusable="false"
+                android:hint="@string/_06_00"
                 android:id="@+id/editTime" />
 
         </LinearLayout>
@@ -74,15 +77,16 @@
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkyButNotDark"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:text="수업코드 : " />
+                android:text="@string/code" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="mxa-que-kia"
+                android:hint="@string/qwe_qwer_qwe"
+                android:textSize="14sp"
                 android:textColor="@color/darkyButNotDark"
                 android:textColorHint="@color/grayButNotGray"
                 android:id="@+id/editCode" />
@@ -100,11 +104,11 @@
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkyButNotDark"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:gravity="center_vertical"
                 android:layout_gravity="center_vertical"
-                android:text="수업요일 : " />
+                android:text="@string/day" />
 
             <Spinner
                 android:layout_width="match_parent"
@@ -122,6 +126,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:background="@drawable/rounded_box_blue"
-            android:text="Add schedule" />
+            android:text="@string/add" />
     </LinearLayout>
 </LinearLayout>

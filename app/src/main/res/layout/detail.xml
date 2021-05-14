@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/detailContainer"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,17 +17,57 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
             android:orientation="vertical">
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_weight="4"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="NAME"
-                android:textSize="14dp"
-                android:textStyle="bold"
-                android:textColor="@color/darkyButNotDark"/>
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:text="@string/name"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/darkyButNotDark"
+                    android:paddingStart="10dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_notifications_24"
+                        android:paddingRight="5dp"
+                        android:contentDescription="@string/alarm"
+                        android:paddingEnd="5dp"
+                        tools:ignore="RtlSymmetry" />
+                    <Switch
+                        android:switchMinWidth="0dp"
+                        android:textOff=""
+                        android:textOn=""
+                        android:thumbTextPadding="15dp"
+                        android:id="@+id/editActivation"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:checked="false"
+                        android:track="@drawable/switch_track_selector"
+                        android:thumb="@drawable/switch_thumb"
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
+                </LinearLayout>
+
+            </LinearLayout>
+
             <EditText
                 android:id="@+id/editName"
                 android:layout_width="wrap_content"
@@ -34,27 +75,30 @@
                 android:layout_margin="5dp"
                 android:paddingHorizontal="10dp"
                 android:background="@drawable/rounded_box"
-                android:layout_height="wrap_content"
-                android:minHeight="35dp"
+                android:layout_height="0dp"
+                android:textSize="14sp"
+                android:minHeight="30dp"
                 android:elevation="2dp"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
-                android:hint="Name" />
+                android:hint="@string/name" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
             android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:text="Code"
-                android:textSize="14dp"
+                android:text="@string/code"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="@color/darkyButNotDark"/>
+                android:textColor="@color/darkyButNotDark"
+                android:paddingStart="10dp"
+                tools:ignore="RtlSymmetry" />
             <EditText
                 android:id="@+id/editCode"
                 android:layout_width="wrap_content"
@@ -63,27 +107,30 @@
                 android:paddingHorizontal="10dp"
                 android:background="@drawable/rounded_box"
                 android:layout_height="wrap_content"
-                android:minHeight="35dp"
+                android:textSize="14sp"
+                android:minHeight="30dp"
                 android:elevation="2dp"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
-                android:hint="Code" />
+                android:hint="@string/qwe_qwer_qwe" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
-                android:paddingLeft="15dp"
-                android:textSize="14dp"
+                android:paddingLeft="10dp"
+                android:text="@string/time"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:text="Time"
-                android:textColor="@color/darkyButNotDark"/>
+                android:textColor="@color/darkyButNotDark"
+                android:paddingStart="10dp"
+                tools:ignore="RtlSymmetry" />
             <EditText
                 android:id="@+id/editTime"
                 android:layout_width="wrap_content"
@@ -92,61 +139,38 @@
                 android:paddingHorizontal="10dp"
                 android:background="@drawable/rounded_box"
                 android:layout_height="wrap_content"
-                android:minHeight="35dp"
+                android:textSize="14sp"
+                android:minHeight="30dp"
                 android:elevation="2dp"
+                android:focusable="false"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
-                android:hint="Time" />
+                android:hint="@string/_06_00" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="Alarm"
-                android:textSize="14dp"
-                android:textStyle="bold"
-                android:textColor="@color/darkyButNotDark"/>
-            <Switch
-                android:id="@+id/editActivation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:layout_marginLeft="15dp"
-                android:checked="false"
-                android:textColorHint="@color/darkyButNotDark"
-                android:track="@drawable/switch_track_selector"
-                android:thumb="@drawable/switch_thumb"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:text="Day of week"
-                android:textSize="14dp"
+                android:text="@string/day_of_week"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="@color/darkyButNotDark"/>
+                android:textColor="@color/darkyButNotDark"
+                android:paddingStart="10dp"
+                tools:ignore="RtlSymmetry" />
             <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
+                android:layout_marginLeft="5dp"
                 android:popupBackground="#f1f3f5"
-                android:layout_weight="1"
                 android:spinnerMode="dropdown"
-                android:id="@+id/daySpin" />
+                android:id="@+id/daySpin"
+                android:layout_marginStart="5dp" />
         </LinearLayout>
 
         <Button
@@ -158,12 +182,21 @@
             android:textColor="@color/white"
             android:elevation="10dp"
             android:background="@drawable/rounded_box_blue"
-            android:text="update" />
+            android:text="@string/update" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/darkyButNotDark"
+            android:textSize="16sp"
+            android:layout_marginHorizontal="10dp"
+            android:textStyle="bold"
+            android:text="@string/memo" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginHorizontal="10dp"
             android:elevation="10dp"
             android:orientation="horizontal">
 
@@ -173,36 +206,55 @@
                 android:layout_width="match_parent"
                 android:textColor="@color/darkyButNotDark"
                 android:textColorHint="@color/grayButNotGray"
-                android:layout_margin="5dp"
-                android:textSize="13dp"
-                android:hint="Content"
-                android:layout_height="40dp" />
+                android:background="@drawable/rounded_box"
+                android:textSize="13sp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginBottom="1dp"
+                android:paddingLeft="10dp"
+                android:hint="@string/content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:paddingStart="10dp"
+                android:layout_marginStart="1dp"
+                tools:ignore="RtlSymmetry" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/addReview"
+                android:src="@drawable/ic_baseline_edit_24"
                 android:background="@drawable/rounded_box"
                 android:layout_width="match_parent"
                 android:layout_margin="1dp"
                 android:layout_height="30dp"
                 android:textColor="@color/black"
-                android:text="Add"
-                android:layout_weight="4" />
+                android:elevation="2dp"
+                android:layout_weight="6"
+                android:contentDescription="@string/add_reviews" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="@color/whitywhity">
+
         </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:layout_marginHorizontal="5dp"
             android:scrollbarThumbVertical="@color/grayButNotGray"
             android:scrollbars="vertical">
             <LinearLayout
                 android:id="@+id/layoutContainer"
                 android:gravity="center"
-                android:padding="10dp"
+                android:padding="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
-
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

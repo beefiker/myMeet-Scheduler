@@ -3,12 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu1"
-        android:title="add"
-        app:showAsAction="always">
-    </item>
-    <item
-        android:id="@+id/menu2"
-        android:title="refresh"
+        android:title="@string/add"
         app:showAsAction="always">
     </item>
 </menu>

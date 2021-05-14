@@ -12,19 +12,23 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,17 +40,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 public class detailActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener{
 
     static int STATIC_ID = 0;
 
     EditText editName, editCode, editTime, editContent;
-    Button btnUpdate, addReview;
+    Button btnUpdate;
+    ImageButton addReview;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch editActivation;
     myDBHelper myHelper;
     SQLiteDatabase sqlDB;
-    LinearLayout layoutContainer;
+    LinearLayout detailContainer, layoutContainer;
     ActionBar.LayoutParams layoutparams;
     Typeface[] sCoreDreams = new Typeface[9];
 
@@ -61,25 +68,25 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
 
-        Spinner spinner = (Spinner) findViewById(R.id.daySpin);
-        ArrayAdapter<String> adpter = new ArrayAdapter<String>(getApplicationContext(), R.layout.textview, days);
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        Spinner spinner = findViewById(R.id.daySpin);
+        ArrayAdapter<String> adpter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
         spinner.setAdapter(adpter);
         spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
-        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+        spinner.setOnItemSelectedListener(this);
         Drawable spinnerDrawable = spinner.getBackground().getConstantState().newDrawable();
 
-        spinnerDrawable.setColorFilter(getResources().getColor(R.color.blueblue), PorterDuff.Mode.SRC_ATOP);
+        spinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             spinner.setBackground(spinnerDrawable);
-        }else{
-            spinner.setBackgroundDrawable(spinnerDrawable);
         }
 
         layoutContainer = findViewById(R.id.layoutContainer);
@@ -90,7 +97,7 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
             sCoreDreams[i] =  Typeface.createFromAsset(getAssets(), "SCDream"+(i+1)+".otf");
         }
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
 
         ActionBar actionbar = getSupportActionBar();
         TextView textview = new TextView(getApplicationContext());
@@ -100,18 +107,27 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
         myHelper = new myDBHelper(this);
 
         Intent intent = getIntent();
+        int color_Alpha = intent.getIntExtra("color_Alpha", 0);
+        int color_R = intent.getIntExtra("color_R", 0);
+        int color_G = intent.getIntExtra("color_G", 0);
+        int color_B = intent.getIntExtra("color_B", 0);
         int id = intent.getIntExtra("id", 0);
-        int day = 0;
-        String nid = "", name = "", code = "", time = "";
-        String activation = "false";
+        int day;
+        String name, code, time;
+        String activation;
 
         STATIC_ID = id;
+
+        detailContainer = findViewById(R.id.detailContainer);
+        GradientDrawable shape = new GradientDrawable();
+        shape.setColor(Color.argb(color_Alpha, color_R, color_G, color_B));
+        shape.setCornerRadius(20);
+        detailContainer.setBackground(shape);
 
         sqlDB = myHelper.getReadableDatabase();
         Cursor cursor = sqlDB.rawQuery("select * from scheduleTable where id = " + STATIC_ID, null);
         cursor.moveToNext();
         final int thisId = cursor.getInt(0);
-        nid = cursor.getString(0);
         day = cursor.getInt(1);
         name = cursor.getString(2);
         code = cursor.getString(3);
@@ -131,6 +147,7 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
         actionbar.setCustomView(textview);
 
         actionbar.setDisplayHomeAsUpEnabled(true);
+        @SuppressLint("UseCompatLoadingForDrawables")
         Drawable backArrow = getResources().getDrawable(R.drawable.ic_baseline_arrow_back_24);
         backArrow.setColorFilter(getResources().getColor(R.color.blueblue), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(backArrow);
@@ -143,38 +160,38 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
         editName.setText(name);
         editCode.setText(code);
 
-        String time1 = time.toString().substring(0,2);
-        String time2 = time.toString().substring(2);
-        editTime.setText(time1 + ":" + time2);
+        String time1 = time.substring(0,2);
+        String time2 = time.substring(2);
+        editTime.setText(time1 + time2);
 
-        if (activation.equals("true")) {
-            editActivation.setChecked(true);
-        } else {
-            editActivation.setChecked(false);
-        }
+        editActivation.setChecked(activation.equals("true"));
 
-
-        editTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Calendar myCalendar = Calendar.getInstance();
-                int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
-                int minute = myCalendar.get(Calendar.MINUTE);
-                TimePickerDialog timePickerDialog = new TimePickerDialog(detailActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar,
-                        (view, hourOfDay, minute1) -> editTime.setText(hourOfDay + ":" + minute1), hour, minute, true);
-                timePickerDialog.show();
-            }
+        editTime.setOnClickListener(v -> {
+            Calendar myCalendar = Calendar.getInstance();
+            int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
+            int minute = myCalendar.get(Calendar.MINUTE);
+            TimePickerDialog timePickerDialog = new TimePickerDialog(detailActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar,
+                    (view, hourOfDay, minute1) -> {
+                        String hourSet = String.valueOf(hourOfDay);
+                        String minSet = String.valueOf(minute1);
+                        if(hourSet.length() < 2) hourSet = "0" + hourSet;
+                        if(minSet.length() < 2) minSet = "0" + minSet;
+                        editTime.setText(hourSet + ":" + minSet);
+                    }, hour, minute, true);
+            timePickerDialog.show();
         });
 
         btnUpdate.setOnClickListener(view -> {
             String updateName = editName.getText().toString();
             String updateCode = editCode.getText().toString();
-            String updateAct = editActivation.getText().toString();
+            boolean updateAct = !editActivation.getText().toString().equals("false");
             int updateDay = spinner.getSelectedItemPosition();
-            String updateTime = editTime.getText().toString().replaceAll(":","");
-            updateTime = updateTime.length() == 3 ? "0"+updateTime : updateTime;
+            String[] hourMin = editTime.getText().toString().split(":");
+            if(hourMin[0].length() < 2) hourMin[0] = "0"+hourMin[0];
+            if(hourMin[1].length() < 2) hourMin[1] = "0"+hourMin[1];
+            String tmp = hourMin[0] + ":"+ hourMin[1];
             sqlDB = myHelper.getWritableDatabase();
-            sqlDB.execSQL("update scheduleTable set day = '"+updateDay+"', course = '"+updateName+"', code = '"+updateCode+"', alarmTime = '"+updateTime+"', activation = '"+updateAct+"'  where id = '"+ thisId +"' ");
+            sqlDB.execSQL("update scheduleTable set day = '"+updateDay+"', course = '"+updateName+"', code = '"+updateCode+"', alarmTime = '"+tmp+"', activation = '"+updateAct+"'  where id = '"+ thisId +"' ");
             sqlDB.close();
             Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent1);
@@ -186,11 +203,15 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
             Date mDate = new Date(now);
             @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String getTime = simpleDateFormat.format(mDate);
-
-            sqlDB = myHelper.getWritableDatabase();
-            sqlDB.execSQL("insert into memoTable(num, content, regdate) values ('"+ STATIC_ID + "','"+editContent.getText().toString()+"', '"+ getTime +"');");
-            sqlDB.close();
-            showMemos();
+            if(editContent.getText().toString().length() > 0) {
+                sqlDB = myHelper.getWritableDatabase();
+                sqlDB.execSQL("insert into memoTable(num, content, regdate) values ('" + STATIC_ID + "','" + editContent.getText().toString() + "', '" + getTime + "');");
+                sqlDB.close();
+                showMemos();
+                inputMethodManager.hideSoftInputFromWindow(editContent.getWindowToken(), 0);
+            }else{
+                Toast.makeText(this, "메모를 입력해주세요", Toast.LENGTH_SHORT).show();
+            }
         });
 
         cursor.close();
@@ -204,9 +225,9 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
     public void showMemos(){
 
         layoutContainer.removeAllViews();
-        int memoId = 0;
-        String memoContent = "";
-        String memoRegdate = "";
+        int memoId;
+        String memoContent;
+        String memoRegdate;
         sqlDB = myHelper.getReadableDatabase();
 //        Cursor cursor1 = sqlDB.rawQuery("select * from memoTable where num = " + STATIC_ID, null);
         Cursor cursor1 = sqlDB.rawQuery("select * from memoTable where num = + '"+STATIC_ID+"'  order by regdate desc", null);
@@ -217,11 +238,11 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
 
             LinearLayout hLayout = new LinearLayout(getApplicationContext());
             LinearLayout.LayoutParams hLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            hLayoutParams.setMargins(0, 0, 0, 40);
+            hLayoutParams.setMargins(0, 0, 0, 30);
             hLayout.setPadding(30, 0, 30, 0);
             hLayout.setLayoutParams(hLayoutParams);
-            hLayout.setElevation(5);
-            hLayout.setMinimumHeight(170);
+            hLayout.setElevation(3);
+            hLayout.setMinimumHeight(150);
 
             hLayout.setBackgroundResource(R.drawable.rounded_box);
 
@@ -235,19 +256,19 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
             TextView tvContent = new TextView(getApplicationContext());
             TextView tvDate = new TextView(getApplicationContext());
             LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 4);
+            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 6f);
             LinearLayout.LayoutParams dateParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 4.0f);
-            dateParams.setMargins(0, 0, 0, 10);
-            btnParams.setMargins(30, 30, 30, 30);
+//            dateParams.setMargins(0, 0, 0, 10);
+//            btnParams.setMargins(30, 30, 30, 30);
             btnRemoveReview.setLayoutParams(btnParams);
-            btnRemoveReview.setBackgroundResource(R.drawable.rounded_box_lightgray);
+            btnRemoveReview.setBackgroundResource(R.drawable.rounded_box_red);
             btnRemoveReview.setTextSize(17);
-            btnRemoveReview.setTextColor(Color.rgb(255, 0, 0));
+            btnRemoveReview.setTextColor(Color.rgb(255, 255, 255));
             btnRemoveReview.setTypeface(sCoreDreams[7]);
             btnRemoveReview.setText("X");
 
             tvContent.setLayoutParams(contentParams);
-            tvContent.setTextSize(11);
+            tvContent.setTextSize(12);
             tvContent.setTextColor(Color.rgb(33,37,41));
             tvContent.setGravity(Gravity.CENTER_VERTICAL);
             tvContent.setTypeface(sCoreDreams[4]);

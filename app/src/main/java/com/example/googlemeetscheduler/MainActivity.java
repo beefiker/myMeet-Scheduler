@@ -51,6 +51,8 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     AlarmManager alarmManager;
     ActionBar.LayoutParams layoutparams;
 
+    @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +82,14 @@ public class MainActivity extends AppCompatActivity {
         layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
         textview.setLayoutParams(layoutparams);
         textview.setText("GoogleMeetScheduler");
-        textview.setTextColor(Color.rgb(33,33,33));
+        textview.setTextColor(R.color.darkyButNotDark);
         textview.setTypeface(sCoreDreams[2], Typeface.BOLD);
         textview.setTextSize(19);
+        assert actionbar != null;
         actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionbar.setCustomView(textview);
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
 
         Toolbar actionBarToolbar = findViewById(R.id.action_bar);
         if (actionBarToolbar != null) actionBarToolbar.setTitleTextColor(Color.rgb(33,33,33));
@@ -98,7 +102,11 @@ public class MainActivity extends AppCompatActivity {
 
         myHelper = new myDBHelper(this);
 
-        showLists();
+        try{
+            showLists();
+        }catch (Exception e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -131,26 +139,15 @@ public class MainActivity extends AppCompatActivity {
         s.setSpan(new AbsoluteSizeSpan(90), 0, s.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         s.setSpan(new ForegroundColorSpan(Color.rgb(26,144,236)), 0, s.length(), 0);
         item.setTitle(s);
-
-        int positionOfMenuItem2 = 1; // or whatever...
-        MenuItem item2 = menu.getItem(positionOfMenuItem2);
-        SpannableString s2 = new SpannableString("Refresh");
-        s2.setSpan(new ForegroundColorSpan(Color.rgb(26,144,236)), 0, s2.length(), 0);
-        item2.setTitle(s2);
         return true;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu1:
-                Intent intent = new Intent(getApplicationContext(), subActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.menu2:
-                showLists();
-                break;
+        if (item.getItemId() == R.id.menu1) {
+            Intent intent = new Intent(getApplicationContext(), subActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
 
@@ -165,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
         alarmManager.cancel(appIntent);
     }
 
+    @SuppressLint({"RtlHardcoded", "SetTextI18n"})
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void showLists(){
 
@@ -196,19 +194,12 @@ public class MainActivity extends AppCompatActivity {
                 schMin = 0;
             }
 
-            RelativeLayout.LayoutParams Lparams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            Lparams.setMargins(5, 10, 5, 30);
+            RelativeLayout.LayoutParams hLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            hLayoutParams.setMargins(5, 10, 5, 30);
             RelativeLayout hLayout = new RelativeLayout(this);
             hLayout.setPadding(30, 20, 30, 20);
 
-            GradientDrawable shape = new GradientDrawable();
-            shape.setColor(Color.rgb(234, 236, 243));
-            shape.setCornerRadius(20);
-            hLayout.setGravity(Gravity.LEFT);
-            hLayout.setBackground(shape);
-            hLayout.setElevation(11);
-            hLayout.setLayoutParams(Lparams);
-            layoutContainer.addView(hLayout);
+            hLayout.setLayoutParams(hLayoutParams);
 
             TextView schName = new TextView(this);
             TextView schCode = new TextView(this);
@@ -229,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
             paramsRIGHT.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             paramsRIGHT.addRule(RelativeLayout.CENTER_VERTICAL);
 
-            schName.setTextSize(18);
+            schName.setTextSize(16);
             schName.setTypeface(sCoreDreams[5]);
 
             schTime.setId(thisId+100000);
@@ -237,7 +228,15 @@ public class MainActivity extends AppCompatActivity {
 
             RelativeLayout.LayoutParams paramsCENTER = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             paramsCENTER.setMargins(50, 10, 0, 0);
-            paramsCENTER.addRule(RelativeLayout.RIGHT_OF, schTime.getId());
+
+            if(scheduleCode.length() < 1){
+                paramsCENTER.addRule(RelativeLayout.RIGHT_OF, schTime.getId());
+                paramsCENTER.addRule(RelativeLayout.CENTER_VERTICAL, schTime.getId());
+                schName.setTextSize(17);
+            }else{
+                paramsCENTER.addRule(RelativeLayout.RIGHT_OF, schTime.getId());
+            }
+
             schName.setLayoutParams(paramsCENTER);
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -249,15 +248,15 @@ public class MainActivity extends AppCompatActivity {
             dayParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
             dayParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             schDay.setLayoutParams(dayParams);
-            schDay.setTextSize(9);
-            schDay.setTypeface(sCoreDreams[6]);
+            schDay.setTextSize(8);
+            schDay.setTypeface(sCoreDreams[5]);
 
             arrCodes.get(count).setLayoutParams(params);
             arrCodes.get(count).setTextSize(12);
             arrCodes.get(count).setTextColor(Color.rgb(33,37,41));
             arrCodes.get(count).setTypeface(sCoreDreams[3]);
 
-            schTime.setTextSize(30);
+            schTime.setTextSize(28);
             schTime.setTypeface(sCoreDreams[4]);
             schTime.setTextColor(Color.rgb(112,112,121));
 
@@ -271,55 +270,90 @@ public class MainActivity extends AppCompatActivity {
             switchParam.addRule(RelativeLayout.LEFT_OF, arrDeletes.get(count).getId());
             switchParam.addRule(RelativeLayout.CENTER_VERTICAL);
             aSwitch.setLayoutParams(switchParam);
-            aSwitch.setHighlightColor(getResources().getColor(R.color.goldenYellow));
             aSwitch.setChecked(scheduleActivation.equals("true"));
             aSwitch.setTrackResource(R.drawable.switch_track_selector);
             aSwitch.setThumbResource(R.drawable.switch_thumb);
 
-            schName.setText(scheduleName);
+            if (scheduleName.length() > 12) {
+                String newName = scheduleName.replaceAll(" ", "");
+                if(isEnglish(newName)) schName.setText(scheduleName.substring(0, scheduleName.length() - 1) + "...");
+                else schName.setText(scheduleName.substring(0, 10) + "...");
+            } else {
+                System.out.println("here"+scheduleName + isEnglish(scheduleName));
+                schName.setText(scheduleName);
+            }
             arrCodes.get(count).setText(scheduleCode);
+
 
             String time1 = scheduleTime.substring(0,2);
             String time2 = scheduleTime.substring(2);
-            schTime.setText(time1 + ":" + time2);
+            schTime.setText(time1 + time2);
+
+
+            GradientDrawable shape = new GradientDrawable();
+
+            int color_Alpha = 110;
+            int color_R;
+            int color_G;
+            int color_B;
 
             switch(day){
                 case 0:
+                    color_R = 255;
+                    color_G = 214;
+                    color_B = 165;
                     schDay.setText("MON");
-                    schDay.setTextColor(Color.argb(180, 239,71,111));
-                    schName.setTextColor(Color.argb(180, 239,71,111));
+                    schDay.setTextColor(Color.argb(255, 239, 71, 111));
+                    schName.setTextColor(Color.argb(255, 239, 71, 111));
                     break;
                 case 1:
+                    color_R = 253;
+                    color_G = 255;
+                    color_B = 182;
                     schDay.setText("TUE");
-                    schDay.setTextColor(Color.argb(255, 255,209,102));
-                    schName.setTextColor(Color.argb(255, 255,209,102));
+                    schDay.setTextColor(Color.argb(255, 255, 209, 102));
+                    schName.setTextColor(Color.argb(255, 255, 209, 102));
                     break;
                 case 2:
+                    color_R = 202;
+                    color_G = 255;
+                    color_B = 191;
                     schDay.setText("WED");
-                    schDay.setTextColor(Color.argb(180, 6,214,160));
-                    schName.setTextColor(Color.argb(180, 6,214,160));
+                    schDay.setTextColor(Color.argb(255, 6, 214, 160));
+                    schName.setTextColor(Color.argb(255, 6, 214, 160));
                     break;
                 case 3:
+                    color_R = 155;
+                    color_G = 246;
+                    color_B = 255;
                     schDay.setText("THU");
-                    schDay.setTextColor(Color.argb(180, 17,138,178));
-                    schName.setTextColor(Color.argb(180, 17,138,178));
+                    schDay.setTextColor(Color.argb(255, 17,138,178));
+                    schName.setTextColor(Color.argb(255, 17,138,178));
                     break;
                 case 4:
+                    color_R = 160;
+                    color_G = 196;
+                    color_B = 255;
                     schDay.setText("FRI");
-                    schDay.setTextColor(Color.argb(180,  7,59,78));
-                    schName.setTextColor(Color.argb(180,  7,59,78));
+                    schDay.setTextColor(Color.argb(255,  7,59,78));
+                    schName.setTextColor(Color.argb(255,  7,59,78));
                     break;
                 case 5:
+                    color_R = 255;
+                    color_G = 198;
+                    color_B = 255;
                     schDay.setText("SAT");
-                    schDay.setTextColor(Color.argb(180, 244,162,97));
-                    schName.setTextColor(Color.argb(180, 244,162,97));
+                    schDay.setTextColor(Color.argb(255, 181, 23, 158));
+                    schName.setTextColor(Color.argb(255, 181, 23, 158));
                     break;
                 default:
+                    color_R = 255;
+                    color_G = 173;
+                    color_B = 173;
                     schDay.setText("SUN");
-                    schDay.setTextColor(Color.argb(180, 231,111,81));
-                    schName.setTextColor(Color.argb(180, 231,111,81));
+                    schDay.setTextColor(Color.argb(255, 231,57,70));
+                    schName.setTextColor(Color.argb(255, 231,57,70));
                     break;
-
             }
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -377,11 +411,25 @@ public class MainActivity extends AppCompatActivity {
                 showLists();
             });
 
+            int finalColor_R = color_R;
+            int finalColor_G = color_G;
+            int finalColor_B = color_B;
             hLayout.setOnClickListener(view -> {
                 Intent intent = new Intent(getApplicationContext(), detailActivity.class);
+                intent.putExtra("color_Alpha", color_Alpha);
+                intent.putExtra("color_R", finalColor_R);
+                intent.putExtra("color_G", finalColor_G);
+                intent.putExtra("color_B", finalColor_B);
                 intent.putExtra("id", thisId);
                 startActivity(intent);
             });
+
+
+            shape.setColor(Color.argb(color_Alpha, color_R, color_G, color_B));
+            shape.setCornerRadius(20);
+            hLayout.setGravity(Gravity.LEFT);
+            hLayout.setBackground(shape);
+            hLayout.setElevation(11);
 
             hLayout.addView(schName);
             hLayout.addView(arrCodes.get(count));
@@ -390,6 +438,8 @@ public class MainActivity extends AppCompatActivity {
             hLayout.addView(aSwitch);
             hLayout.addView(arrDeletes.get(count));
 
+            layoutContainer.addView(hLayout);
+
             count++;
         }
 
@@ -397,4 +447,7 @@ public class MainActivity extends AppCompatActivity {
         sqlDB.close();
     }
 
+    public boolean isEnglish(String s){
+        return Pattern.matches("^[0-9a-zA-z]*$", s);
+    }
 }
