@@ -274,12 +274,14 @@ public class MainActivity extends AppCompatActivity {
             aSwitch.setTrackResource(R.drawable.switch_track_selector);
             aSwitch.setThumbResource(R.drawable.switch_thumb);
 
-            if (scheduleName.length() > 12) {
-                String newName = scheduleName.replaceAll(" ", "");
-                if(isEnglish(newName)) schName.setText(scheduleName.substring(0, scheduleName.length() - 1) + "...");
-                else schName.setText(scheduleName.substring(0, 10) + "...");
-            } else {
-                System.out.println("here"+scheduleName + isEnglish(scheduleName));
+            String newName = scheduleName.replaceAll(" ", "");
+            if (isEnglish(newName) && newName.length() > 16) {
+                schName.setText(scheduleName.substring(0, 17) + "...");
+            }else if(isEnglish(newName) && newName.length() < 15){
+                schName.setText(scheduleName);
+            }else if(!isEnglish(newName) && newName.length() > 13){
+                schName.setText(scheduleName.substring(0, 13) + "...");
+            }else{
                 schName.setText(scheduleName);
             }
             arrCodes.get(count).setText(scheduleCode);
