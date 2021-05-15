@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -51,6 +52,7 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,7 +90,7 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
 
         actionbar.setDisplayHomeAsUpEnabled(true);
         @SuppressLint("UseCompatLoadingForDrawables")
-        Drawable backArrow = getResources().getDrawable(R.drawable.ic_baseline_arrow_back_24);
+        Drawable backArrow = getDrawable(R.drawable.ic_baseline_arrow_back_24);
         backArrow.setColorFilter(getResources().getColor(R.color.blueblue), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(backArrow);
 

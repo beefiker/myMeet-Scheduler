@@ -6,12 +6,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,32 +24,28 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -70,18 +64,18 @@ public class MainActivity extends AppCompatActivity {
     Typeface[] sCoreDreams = new Typeface[9];
 
     AlarmManager alarmManager;
-    ActionBar.LayoutParams layoutparams;
+    ActionBar.LayoutParams actionLayoutParams;
 
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ActionBar actionbar = getSupportActionBar();
         TextView textview = new TextView(getApplicationContext());
-        layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-        textview.setLayoutParams(layoutparams);
+        actionLayoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        textview.setLayoutParams(actionLayoutParams);
         textview.setText("GoogleMeetScheduler");
         textview.setTextColor(R.color.darkyButNotDark);
         textview.setTypeface(sCoreDreams[2], Typeface.BOLD);
@@ -164,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint({"RtlHardcoded", "SetTextI18n"})
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void showLists(){
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -357,10 +351,34 @@ public class MainActivity extends AppCompatActivity {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
             final Calendar calendar = new GregorianCalendar();
-            final Intent myIntent = new Intent(this, AlarmReceiver.class);
-            calendar.set(Calendar.HOUR_OF_DAY, schHour);
-            calendar.set(Calendar.MINUTE, schMin);
-            calendar.set(Calendar.SECOND, 0);
+            Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
+//            calendar.set(Calendar.HOUR_OF_DAY, schHour);
+//            calendar.set(Calendar.MINUTE, schMin);
+//            calendar.set(Calendar.SECOND, 0);
+
+            String nowYear = String.valueOf(LocalDate.now().getYear());
+            nowYear = nowYear.length() == 3 ? nowYear+"0" : nowYear.length() == 2 ? nowYear+"00" : nowYear.length() == 1 ? nowYear+"000" : nowYear;
+            String nowMonth = String.valueOf(LocalDate.now().getMonthValue());
+            nowMonth = nowMonth.length() < 2 ? "0"+nowMonth : nowMonth;
+            String nowDay = String.valueOf(LocalDate.now().getDayOfMonth());
+            String nowHour = String.valueOf(schHour);
+            nowHour = nowHour.length() < 2 ? "0"+nowHour : nowHour;
+            String nowMinute = String.valueOf(schMin);
+            nowMinute = nowMinute.length() < 2 ? "0"+nowMinute : nowMinute;
+            String newForm = nowYear+"-"+nowMonth+"-"+nowDay+" "+nowHour+":"+nowMinute+":00";
+            System.out.println("myf : "+newForm);
+
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date datetime = null;
+            try{
+                datetime = dateFormat.parse(newForm);
+            }catch (ParseException e){
+                e.printStackTrace();
+            }
+
+            assert datetime != null;
+            calendar.setTime(datetime);
 
             if(scheduleActivation.equals("true")){
                 myIntent.putExtra("state", "on");
@@ -368,19 +386,34 @@ public class MainActivity extends AppCompatActivity {
                 myIntent.putExtra("scheduleName", scheduleName);
                 myIntent.putExtra("scheduleCode", scheduleCode);
                 myIntent.putExtra("scheduleTime", scheduleTime);
-                PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_ONE_SHOT);
-                alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
+//                PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_ONE_SHOT);
+//                alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
+            }else{
+                myIntent.putExtra("state", "off");
+                myIntent.putExtra("scheduleId", thisId);
+                myIntent.putExtra("scheduleName", scheduleName);
+                myIntent.putExtra("scheduleCode", scheduleCode);
+                myIntent.putExtra("scheduleTime", scheduleTime);
             }
 
             // thisID 고유한 값으로 펜딩인텐트 생성
 
-            PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_ONE_SHOT);
+
+
+            PendingIntent appIntent = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            long calMillis = calendar.getTimeInMillis();
+            long currMillis = System.currentTimeMillis();
+            if(calMillis > currMillis){
+                alarmManager.setExact(AlarmManager.RTC, calendar.getTimeInMillis(), appIntent);
+            }
+
 
             aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 sqlDB = myHelper.getWritableDatabase();
                     if(isChecked){
                         sqlDB.execSQL("update scheduleTable set activation = '"+true+"' where id = '"+ thisId +"'");
-                        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
+                        alarmManager.setExact(AlarmManager.RTC, calendar.getTimeInMillis(), appIntent);
                         Toast.makeText(this,  "앱인텐트 : " + appIntent + "\n활성화 id : " + thisId, Toast.LENGTH_SHORT).show();
                     }else{
                         // 펜딩인텐트 삭제

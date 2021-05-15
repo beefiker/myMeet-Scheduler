@@ -148,7 +148,7 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
 
         actionbar.setDisplayHomeAsUpEnabled(true);
         @SuppressLint("UseCompatLoadingForDrawables")
-        Drawable backArrow = getResources().getDrawable(R.drawable.ic_baseline_arrow_back_24);
+        Drawable backArrow = getDrawable(R.drawable.ic_baseline_arrow_back_24);
         backArrow.setColorFilter(getResources().getColor(R.color.blueblue), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(backArrow);
 
