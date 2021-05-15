@@ -28,7 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,7 +41,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
-public class detailActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener{
+public class DetailActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener{
 
     static int STATIC_ID = 0;
 
@@ -170,7 +169,7 @@ public class detailActivity extends AppCompatActivity  implements AdapterView.On
             Calendar myCalendar = Calendar.getInstance();
             int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
             int minute = myCalendar.get(Calendar.MINUTE);
-            TimePickerDialog timePickerDialog = new TimePickerDialog(detailActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar,
+            TimePickerDialog timePickerDialog = new TimePickerDialog(DetailActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar,
                     (view, hourOfDay, minute1) -> {
                         String hourSet = String.valueOf(hourOfDay);
                         String minSet = String.valueOf(minute1);

@@ -21,10 +21,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".subActivity"
+        <activity android:name=".AddActivity"
             android:theme="@style/Theme.AppCompat"/>
 
-        <activity android:name=".detailActivity" android:label="detail" />
+        <activity android:name=".DetailActivity" android:label="detail" />
 
         <receiver android:name=".AlarmReceiver" />
         <service

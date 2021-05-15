@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     ActionBar.LayoutParams actionLayoutParams;
 
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu1) {
-            Intent intent = new Intent(getApplicationContext(), subActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AddActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint({"RtlHardcoded", "SetTextI18n"})
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void showLists(){
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -453,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
             int finalColor_G = color_G;
             int finalColor_B = color_B;
             hLayout.setOnClickListener(view -> {
-                Intent intent = new Intent(getApplicationContext(), detailActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("color_Alpha", color_Alpha);
                 intent.putExtra("color_R", finalColor_R);
                 intent.putExtra("color_G", finalColor_G);

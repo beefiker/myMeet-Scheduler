@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -21,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,7 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Calendar;
 import java.util.Objects;
 
-public class subActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class AddActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     Button addSchedule;
     EditText editName, editTime, editCode;
     myDBHelper myHelper;
@@ -105,7 +103,7 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
                 Calendar myCalendar = Calendar.getInstance();
                 int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
                 int minute = myCalendar.get(Calendar.MINUTE);
-                TimePickerDialog timePickerDialog = new TimePickerDialog(subActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar,
+                TimePickerDialog timePickerDialog = new TimePickerDialog(AddActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar,
                         (view1, hourOfDay, minute1) -> {
                             String hourSet = String.valueOf(hourOfDay);
                             String minSet = String.valueOf(minute1);
@@ -138,7 +136,7 @@ public class subActivity extends AppCompatActivity implements AdapterView.OnItem
                     sqlDB.close();
                     openMain();
                 }else {
-                    Toast.makeText(subActivity.this, "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddActivity.this, "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
                 }
             }
 
