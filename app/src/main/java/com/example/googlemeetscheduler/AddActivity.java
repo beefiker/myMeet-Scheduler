@@ -230,7 +230,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
 
     public class myDBHelper extends SQLiteOpenHelper {
         public myDBHelper(@Nullable Context context) {
-            super(context, "meetDBtest", null, 1);
+            super(context, "meetDB", null, 1);
         }
 
         @Override

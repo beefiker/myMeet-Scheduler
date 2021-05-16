@@ -229,7 +229,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         String memoContent;
         String memoRegdate;
         sqlDB = myHelper.getReadableDatabase();
-//        Cursor cursor1 = sqlDB.rawQuery("select * from memoTable where num = " + STATIC_ID, null);
         Cursor cursor1 = sqlDB.rawQuery("select * from memoTable where num = + '"+STATIC_ID+"'  order by regdate desc", null);
         while(cursor1.moveToNext()){
             memoId = cursor1.getInt(1);
@@ -258,8 +257,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 6f);
             LinearLayout.LayoutParams dateParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 4.0f);
-//            dateParams.setMargins(0, 0, 0, 10);
-//            btnParams.setMargins(30, 30, 30, 30);
+
             btnRemoveReview.setLayoutParams(btnParams);
             btnRemoveReview.setBackgroundResource(R.drawable.rounded_box_red);
             btnRemoveReview.setTextSize(17);
@@ -299,7 +297,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
 
             layoutContainer.addView(hLayout);
 
-
         }
         cursor1.close();
         sqlDB.close();
@@ -313,7 +310,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
 
     public static class myDBHelper extends SQLiteOpenHelper {
         public myDBHelper(@Nullable Context context) {
-            super(context, "meetDBtest", null, 1);
+            super(context, "meetDB", null, 1);
         }
 
         @Override

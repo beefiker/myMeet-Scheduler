@@ -28,7 +28,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     int[] dayCounts = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -48,9 +48,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             alarmCursor1.moveToFirst();
             final String alarmDate = alarmCursor1.getString(1);
 
-            String splitDates[] = alarmDate.split(" ");
-            String dates[] = splitDates[0].split("-");
-            String times[] = splitDates[1].split(":");
+            String[] splitDates = alarmDate.split(" ");
+            String[] dates = splitDates[0].split("-");
+            String[] times = splitDates[1].split(":");
 
             int nowYear = Integer.parseInt(dates[0]);
             int nowMonth = Integer.parseInt(dates[1]);
@@ -59,7 +59,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             int nowMinute =  Integer.parseInt(times[1]);
 
             boolean isLeap = (nowYear % 4 == 0 && nowYear % 100 != 0) || nowYear % 400 == 0;
-            // sync with myDB day  column format ( 0: mon, 1: tue, 2: wed, ... 6: sun);
+            // sync with myDB day column format ( 0: mon, 1: tue, 2: wed, ... 6: sun);
             if(isLeap){
                 dayCounts[1] += 1;
             }
@@ -87,9 +87,10 @@ public class AlarmReceiver extends BroadcastReceiver {
             String newForm = nowYear +"-"+ sMonth +"-"+ sDayOfMonth +" ";
             newForm += sHour+":"+sMinute+":00";
 
-            System.out.println("update to : " + newForm);
-            if(state.equals("on")){
+            System.out.println("update date to : " + newForm);
 
+            if(state.equals("on")){
+                System.out.println("*ALARM GOES OFF and then*\nUpdate to -> "+newForm);
                 sqlDB = myHelper.getWritableDatabase();
                 sqlDB.execSQL("update alarmDetailTable set date = '"+newForm+"' where id = '"+scheduleId+"' ");
                 sqlDB.close();
@@ -100,7 +101,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 + "아이디 : " + scheduleId + "\n"
                                 + alarmDate,
                         Toast.LENGTH_LONG).show();
-                System.out.println(LocalDate.now() + " : " + LocalTime.now() + "알람 : "+ scheduleName );
             }
         }
         sqlDB.close();

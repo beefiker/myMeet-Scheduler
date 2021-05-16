@@ -12,7 +12,6 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,7 +41,6 @@ import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -66,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
     AlarmManager alarmManager;
     ActionBar.LayoutParams actionLayoutParams;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static class myDBHelper extends SQLiteOpenHelper{
         public myDBHelper(@Nullable Context context) {
-            super(context, "meetDBtest", null, 1);
+            super(context, "meetDB", null, 1);
         }
 
         @Override
@@ -130,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_option, menu);
-        int positionOfMenuItem = 0; // or whatever...
+        int positionOfMenuItem = 0;
         MenuItem item = menu.getItem(positionOfMenuItem);
         SpannableString s = new SpannableString("+");
         s.setSpan(new AbsoluteSizeSpan(90), 0, s.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
@@ -147,11 +145,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-
     }
 
     private void cancelAlarm(int thisId) {
-
         Intent myIntent = new Intent(this, AlarmReceiver.class);
         PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         appIntent.cancel();
@@ -160,11 +156,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint({"RtlHardcoded", "SetTextI18n"})
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void showLists(){
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
 
         layoutContainer.removeAllViews();
         sqlDB = myHelper.getReadableDatabase();
@@ -179,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
             scheduleCode = cursor.getString(3);
             scheduleTime = cursor.getString(4);
             scheduleActivation = cursor.getString(5);
-
 
             final String[] schHourMin = scheduleTime.split(":");
             final int schHour = schHourMin.length > 0 ? Integer.parseInt(schHourMin[0]): 0;
@@ -266,22 +260,20 @@ public class MainActivity extends AppCompatActivity {
             aSwitch.setThumbResource(R.drawable.switch_thumb);
 
             String newName = scheduleName.replaceAll(" ", "");
-            if (isEnglish(newName) && newName.length() > 16) {
+            if (isEnglishOrNumber(newName) && newName.length() > 16) {
                 schName.setText(scheduleName.substring(0, 17) + "...");
-            }else if(isEnglish(newName) && newName.length() < 15){
+            }else if(isEnglishOrNumber(newName) && newName.length() < 15){
                 schName.setText(scheduleName);
-            }else if(!isEnglish(newName) && newName.length() > 13){
-                schName.setText(scheduleName.substring(0, 13) + "...");
+            }else if(!isEnglishOrNumber(newName) && newName.length() > 11){
+                schName.setText(scheduleName.substring(0, 11) + "...");
             }else{
                 schName.setText(scheduleName);
             }
             arrCodes.get(count).setText(scheduleCode);
 
-
             String time1 = scheduleTime.substring(0,2);
             String time2 = scheduleTime.substring(2);
             schTime.setText(time1 + time2);
-
 
             GradientDrawable shape = new GradientDrawable();
 
@@ -351,6 +343,7 @@ public class MainActivity extends AppCompatActivity {
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
+            @SuppressLint("Recycle")
             Cursor alarmCursor = sqlDB.rawQuery("select * from alarmDetailTable where id = "+ thisId, null);
             alarmCursor.moveToNext();
             final String alarmDate = alarmCursor.getString(1);
@@ -379,11 +372,6 @@ public class MainActivity extends AppCompatActivity {
                 myIntent.putExtra("alarmDate", alarmDate);
             }else{
                 myIntent.putExtra("state", "off");
-                myIntent.putExtra("scheduleId", thisId);
-                myIntent.putExtra("scheduleName", scheduleName);
-                myIntent.putExtra("scheduleCode", scheduleCode);
-                myIntent.putExtra("scheduleTime", scheduleTime);
-                myIntent.putExtra("alarmDate", alarmDate);
             }
 
             PendingIntent appIntent = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -399,11 +387,8 @@ public class MainActivity extends AppCompatActivity {
                     if(isChecked){
                         sqlDB.execSQL("update scheduleTable set activation = '"+true+"' where id = '"+ thisId +"'");
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
-                        Toast.makeText(this,  "앱인텐트 : " + appIntent + "\n활성화 id : " + thisId, Toast.LENGTH_SHORT).show();
                     }else{
-                        // 펜딩인텐트 삭제
                         cancelAlarm(thisId);
-                        Toast.makeText(this, "앱인텐트 : " + appIntent  + "\n삭제할 id : " + thisId, Toast.LENGTH_SHORT).show();
                         sqlDB.execSQL("update scheduleTable set activation = '"+false+"' where id = '"+ thisId +"'");
                     }
                 sqlDB.close();
@@ -418,20 +403,15 @@ public class MainActivity extends AppCompatActivity {
             arrDeletes.get(count).setOnClickListener(view -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
                 builder.setTitle("Deletes").setMessage("Are you sure ? \nDelete " + scheduleName)
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sqlDB = myHelper.getWritableDatabase();
-                                sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
-                                sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
-                                sqlDB.close();
-                                // 해당 펜딩 인덴트 삭제
-                                cancelAlarm(thisId);
-                                showLists();
-                            }}).setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }}).show();
+                        .setPositiveButton("YES", (dialog, which) -> {
+                            sqlDB = myHelper.getWritableDatabase();
+                            sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
+                            sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
+                            sqlDB.close();
+                            cancelAlarm(thisId);
+                            showLists();
+                        }).setNegativeButton("NO", (dialog, which) -> {
+                            }).show();
             });
 
             int finalColor_R = color_R;
@@ -446,7 +426,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("id", thisId);
                 startActivity(intent);
             });
-
 
             shape.setColor(Color.argb(color_Alpha, color_R, color_G, color_B));
             shape.setCornerRadius(20);
@@ -470,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
         sqlDB.close();
     }
 
-    public boolean isEnglish(String s){
+    public boolean isEnglishOrNumber(String s){
         return Pattern.matches("^[0-9a-zA-z]*$", s);
     }
 }
