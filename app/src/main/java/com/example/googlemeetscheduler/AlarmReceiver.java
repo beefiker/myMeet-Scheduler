@@ -93,7 +93,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 sqlDB = myHelper.getWritableDatabase();
                 sqlDB.execSQL("update alarmDetailTable set date = '"+newForm+"' where id = '"+scheduleId+"' ");
                 sqlDB.close();
-
                 Toast.makeText(context,
                         "이름 : " + scheduleName + "\n"
                                 + "코드 : " + scheduleCode + "\n"
