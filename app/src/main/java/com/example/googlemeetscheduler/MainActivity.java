@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     ActionBar.LayoutParams actionLayoutParams;
 
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,14 +112,16 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY AUTOINCREMENT, day INTEGER, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
+            db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY, day INTEGER, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
             db.execSQL("create table memoTable (num INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, regdate TEXT)");
+            db.execSQL("create table alarmDetailTable (id INTEGER PRIMARY KEY, date TEXT)");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL("drop table if exists scheduleTable");
             db.execSQL("drop table if exists memoTable");
+            db.execSQL("drop table if exists alarmDetailTable");
             onCreate(db);
         }
     }
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint({"RtlHardcoded", "SetTextI18n"})
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void showLists(){
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -169,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = sqlDB.rawQuery("select * from scheduleTable order by day, alarmTime", null);
 
         while(cursor.moveToNext()){
-
 
             final String scheduleName, scheduleCode, scheduleTime, scheduleActivation;
             final int thisId = cursor.getInt(0);
@@ -303,8 +304,8 @@ public class MainActivity extends AppCompatActivity {
                     color_G = 255;
                     color_B = 182;
                     schDay.setText("TUE");
-                    schDay.setTextColor(Color.argb(255, 255, 209, 102));
-                    schName.setTextColor(Color.argb(255, 255, 209, 102));
+                    schDay.setTextColor(Color.argb(255, 244, 162, 97));
+                    schName.setTextColor(Color.argb(205, 244, 162, 97));
                     break;
                 case 2:
                     color_R = 202;
@@ -352,9 +353,6 @@ public class MainActivity extends AppCompatActivity {
 
             final Calendar calendar = new GregorianCalendar();
             Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
-//            calendar.set(Calendar.HOUR_OF_DAY, schHour);
-//            calendar.set(Calendar.MINUTE, schMin);
-//            calendar.set(Calendar.SECOND, 0);
 
             String nowYear = String.valueOf(LocalDate.now().getYear());
             nowYear = nowYear.length() == 3 ? nowYear+"0" : nowYear.length() == 2 ? nowYear+"00" : nowYear.length() == 1 ? nowYear+"000" : nowYear;
@@ -398,8 +396,6 @@ public class MainActivity extends AppCompatActivity {
 
             // thisID 고유한 값으로 펜딩인텐트 생성
 
-
-
             PendingIntent appIntent = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             long calMillis = calendar.getTimeInMillis();
@@ -407,7 +403,6 @@ public class MainActivity extends AppCompatActivity {
             if(calMillis > currMillis){
                 alarmManager.setExact(AlarmManager.RTC, calendar.getTimeInMillis(), appIntent);
             }
-
 
             aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 sqlDB = myHelper.getWritableDatabase();

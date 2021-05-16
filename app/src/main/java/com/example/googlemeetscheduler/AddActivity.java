@@ -28,7 +28,14 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class AddActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -40,6 +47,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
     Typeface[] sCoreDreams = new Typeface[9];
 
     String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+    int[] dayCounts = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     int selectedDay = 0;
 
     @Override
@@ -115,24 +123,75 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
 
         });
 
+        final int idm = (int) System.currentTimeMillis();
+
         addSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!editName.getText().toString().equals("") && editName.getText().toString().length() > 0 && editTime.getText().toString().length() > 0){
 
-                    sqlDB = myHelper.getWritableDatabase();
+                    Calendar cal = new GregorianCalendar();
+                    Calendar calendar = Calendar.getInstance();
+                    int nowYear = calendar.get(Calendar.YEAR);
+                    int nowMonth = calendar.get(Calendar.MONTH)+1;
+                    int nowDayOfMonth = calendar.get(Calendar.DATE);
+                    int nowDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                    int nowHour = calendar.get(Calendar.HOUR);
+                    int nowMinute = calendar.get(Calendar.MINUTE);
+
+                    boolean isLeap = (nowYear % 4 == 0 && nowYear % 100 != 0) || nowYear % 400 == 0;
+                    // sync with myDB day  column format ( 0: mon, 1: tue, 2: wed, ... 6: sun);
+                    if(isLeap){
+                        dayCounts[1] += 1;
+                    }
 
                     String[] hourMin = editTime.getText().toString().split(":");
                     if(hourMin[0].length() < 2) hourMin[0] = "0"+hourMin[0];
                     if(hourMin[1].length() < 2) hourMin[1] = "0"+hourMin[1];
+
+                    int[] nowHourMin = {Integer.parseInt(hourMin[0]), Integer.parseInt(hourMin[1])};
+
+                    nowDayOfMonth += Math.abs(nowDayOfWeek - selectedDay);
+
+                    if(nowDayOfWeek == selectedDay){
+                        if(nowHourMin[0] < nowHour){
+                            if(nowHourMin[0] != 0){
+                                nowDayOfMonth += 7;
+                            }
+
+                        }else if(nowHourMin[0] == nowHour){
+                            if(nowHourMin[1] < nowMinute){
+                                if(nowHourMin[1] != 0) {
+                                    nowDayOfMonth += 7;
+                                }
+                            }
+                        }
+                    }
+
+                    if(nowDayOfMonth > dayCounts[nowMonth-1]){
+                       nowDayOfMonth = nowDayOfMonth - dayCounts[nowMonth-1];
+                       if(nowMonth>12){
+                           nowYear++;
+                           nowMonth -= 12;
+                       }
+                        nowMonth++;
+                    }
+
+                    String newForm = nowYear +"-"+ nowMonth +"-"+ nowDayOfMonth +" ";
+                    newForm += hourMin[0]+":"+hourMin[1]+":00";
+
+                    System.out.println("nowDay : " + newForm);
+
+                    sqlDB = myHelper.getWritableDatabase();
                     String tmp = hourMin[0] + ":"+ hourMin[1];
-                    sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+true+"');");
+                    sqlDB.execSQL("insert into scheduleTable(id, day, course, code, alarmTime, activation) values ('"+ idm + "','"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+true+"');");
+                    sqlDB.execSQL("insert into alarmDetailTable(id, date) values ('"+ idm + "','"+ newForm + "');");
                     sqlDB.close();
                     openMain();
 
                 }else if(editTime.getText().toString().equals("") && editTime.getText().toString().length() < 1){
                     sqlDB = myHelper.getWritableDatabase();
-                    sqlDB.execSQL("insert into scheduleTable(day, course, code, alarmTime, activation) values ('"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ "00:00" +"', '"+true+"');");
+                    sqlDB.execSQL("insert into scheduleTable(id, day, course, code, alarmTime, activation) values ('"+ idm + "','"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ "00:00" +"', '"+true+"');");
                     sqlDB.close();
                     openMain();
                 }else {
@@ -151,13 +210,13 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
     @SuppressLint("ResourceAsColor")
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        selectedDay = days[position].equals("월요일") ? 0 :
-                        days[position].equals("화요일") ? 1 :
-                        days[position].equals("수요일") ? 2 :
-                        days[position].equals("목요일") ? 3 :
-                        days[position].equals("금요일") ? 4 :
-                        days[position].equals("토요일") ? 5 :
-                        days[position].equals("일요일") ? 6 : 0;
+        selectedDay = days[position].equals("월요일") ? 2 :
+                        days[position].equals("화요일") ? 3 :
+                        days[position].equals("수요일") ? 4 :
+                        days[position].equals("목요일") ? 5 :
+                        days[position].equals("금요일") ? 6 :
+                        days[position].equals("토요일") ? 7 :
+                        days[position].equals("일요일") ? 1 : 1;
     }
 
     @Override
