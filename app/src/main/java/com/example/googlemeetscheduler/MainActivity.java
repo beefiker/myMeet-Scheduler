@@ -351,26 +351,18 @@ public class MainActivity extends AppCompatActivity {
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
+            Cursor alarmCursor = sqlDB.rawQuery("select * from alarmDetailTable where id = "+ thisId, null);
+            alarmCursor.moveToNext();
+            final String alarmDate = cursor.getString(1);
+
             final Calendar calendar = new GregorianCalendar();
             Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
-
-            String nowYear = String.valueOf(LocalDate.now().getYear());
-            nowYear = nowYear.length() == 3 ? nowYear+"0" : nowYear.length() == 2 ? nowYear+"00" : nowYear.length() == 1 ? nowYear+"000" : nowYear;
-            String nowMonth = String.valueOf(LocalDate.now().getMonthValue());
-            nowMonth = nowMonth.length() < 2 ? "0"+nowMonth : nowMonth;
-            String nowDay = String.valueOf(LocalDate.now().getDayOfMonth());
-            String nowHour = String.valueOf(schHour);
-            nowHour = nowHour.length() < 2 ? "0"+nowHour : nowHour;
-            String nowMinute = String.valueOf(schMin);
-            nowMinute = nowMinute.length() < 2 ? "0"+nowMinute : nowMinute;
-            String newForm = nowYear+"-"+nowMonth+"-"+nowDay+" "+nowHour+":"+nowMinute+":00";
-            System.out.println("myf : "+newForm);
 
             @SuppressLint("SimpleDateFormat")
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date datetime = null;
             try{
-                datetime = dateFormat.parse(newForm);
+                datetime = dateFormat.parse(alarmDate);
             }catch (ParseException e){
                 e.printStackTrace();
             }
@@ -384,14 +376,14 @@ public class MainActivity extends AppCompatActivity {
                 myIntent.putExtra("scheduleName", scheduleName);
                 myIntent.putExtra("scheduleCode", scheduleCode);
                 myIntent.putExtra("scheduleTime", scheduleTime);
-//                PendingIntent appIntent = PendingIntent.getBroadcast(this, thisId, myIntent, PendingIntent.FLAG_ONE_SHOT);
-//                alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, appIntent);
+                myIntent.putExtra("alarmDate", alarmDate);
             }else{
                 myIntent.putExtra("state", "off");
                 myIntent.putExtra("scheduleId", thisId);
                 myIntent.putExtra("scheduleName", scheduleName);
                 myIntent.putExtra("scheduleCode", scheduleCode);
                 myIntent.putExtra("scheduleTime", scheduleTime);
+                myIntent.putExtra("alarmDate", alarmDate);
             }
 
             // thisID 고유한 값으로 펜딩인텐트 생성

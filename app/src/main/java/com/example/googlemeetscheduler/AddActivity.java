@@ -130,7 +130,6 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
             public void onClick(View v) {
                 if(!editName.getText().toString().equals("") && editName.getText().toString().length() > 0 && editTime.getText().toString().length() > 0){
 
-                    Calendar cal = new GregorianCalendar();
                     Calendar calendar = Calendar.getInstance();
                     int nowYear = calendar.get(Calendar.YEAR);
                     int nowMonth = calendar.get(Calendar.MONTH)+1;
@@ -177,7 +176,11 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
                         nowMonth++;
                     }
 
-                    String newForm = nowYear +"-"+ nowMonth +"-"+ nowDayOfMonth +" ";
+                    String sMonth = String.valueOf(nowMonth);
+                    String sDayOfMonth = String.valueOf(nowDayOfMonth);
+                    if(sMonth.length() < 2) sMonth = "0"+sMonth;
+                    if(sDayOfMonth.length() < 2) sDayOfMonth = "0"+sDayOfMonth;
+                    String newForm = nowYear +"-"+ sMonth +"-"+ sDayOfMonth +" ";
                     newForm += hourMin[0]+":"+hourMin[1]+":00";
 
                     System.out.println("nowDay : " + newForm);
