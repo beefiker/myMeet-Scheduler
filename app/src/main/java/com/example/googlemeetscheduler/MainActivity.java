@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
 
             Cursor alarmCursor = sqlDB.rawQuery("select * from alarmDetailTable where id = "+ thisId, null);
             alarmCursor.moveToNext();
-            final String alarmDate = cursor.getString(1);
+            final String alarmDate = alarmCursor.getString(1);
 
             final Calendar calendar = new GregorianCalendar();
             Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
@@ -386,21 +386,19 @@ public class MainActivity extends AppCompatActivity {
                 myIntent.putExtra("alarmDate", alarmDate);
             }
 
-            // thisID 고유한 값으로 펜딩인텐트 생성
-
             PendingIntent appIntent = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             long calMillis = calendar.getTimeInMillis();
             long currMillis = System.currentTimeMillis();
             if(calMillis > currMillis){
-                alarmManager.setExact(AlarmManager.RTC, calendar.getTimeInMillis(), appIntent);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
             }
 
             aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 sqlDB = myHelper.getWritableDatabase();
                     if(isChecked){
                         sqlDB.execSQL("update scheduleTable set activation = '"+true+"' where id = '"+ thisId +"'");
-                        alarmManager.setExact(AlarmManager.RTC, calendar.getTimeInMillis(), appIntent);
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
                         Toast.makeText(this,  "앱인텐트 : " + appIntent + "\n활성화 id : " + thisId, Toast.LENGTH_SHORT).show();
                     }else{
                         // 펜딩인텐트 삭제
