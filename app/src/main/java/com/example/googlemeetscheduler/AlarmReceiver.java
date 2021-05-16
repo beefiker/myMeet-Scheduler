@@ -91,7 +91,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             if(state.equals("on")){
 
                 sqlDB = myHelper.getWritableDatabase();
-                sqlDB.execSQL("update alarmDetailTable set date = '"+newForm+"' + where id = '"+ scheduleId +"' ");
+                sqlDB.execSQL("update alarmDetailTable set date = '"+newForm+"' where id = '"+scheduleId+"' ");
                 sqlDB.close();
 
                 Toast.makeText(context,
