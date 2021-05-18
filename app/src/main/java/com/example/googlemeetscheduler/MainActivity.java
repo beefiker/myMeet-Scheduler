@@ -95,11 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         myHelper = new myDBHelper(this);
 
-        try{
-            showLists();
-        }catch (Exception e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        showLists();
 
     }
 
@@ -174,10 +170,6 @@ public class MainActivity extends AppCompatActivity {
             scheduleCode = cursor.getString(3);
             scheduleTime = cursor.getString(4);
             scheduleActivation = cursor.getString(5);
-
-            final String[] schHourMin = scheduleTime.split(":");
-            final int schHour = schHourMin.length > 0 ? Integer.parseInt(schHourMin[0]): 0;
-            final int schMin = schHourMin.length > 1 ? Integer.parseInt(schHourMin[1]) : 0;
 
             RelativeLayout.LayoutParams hLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             hLayoutParams.setMargins(5, 10, 5, 30);

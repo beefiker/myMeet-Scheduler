@@ -289,20 +289,14 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
 
             int dayGap = dbDay - selectedDay;
             if(dayGap < 0){
-                if(timeGap > 604800){
-                    cal.add(Calendar.DATE, -(Math.abs(dayGap)+7));
-                }else{
-                    cal.add(Calendar.DATE, Math.abs(dayGap));
-                }
-
+                cal.add(Calendar.DATE, Math.abs(dayGap));
             }else if(dayGap > 0){
-                if(timeGap > 604800){ // 1week = 604800
-                    cal.add(Calendar.DATE, -(7-dayGap+2));
-                }else{
-                    cal.add(Calendar.DATE, (7-dayGap));
-                }
+                cal.add(Calendar.DATE, (7-dayGap));
             }
-
+            int checkTimeGap = (int) (cal.getTimeInMillis() - systemCal.getTimeInMillis());
+            if(checkTimeGap > 604800){
+                cal.add(Calendar.DATE, -7);
+            }
             int year = cal.get(Calendar.YEAR);
             int mon = cal.get(Calendar.MONTH) + 1;
             String newMon = String.valueOf(mon);
