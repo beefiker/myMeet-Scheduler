@@ -42,7 +42,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         String state = intent.getExtras().getString("state");
         String scheduleName = intent.getExtras().getString("scheduleName");
         String scheduleCode = intent.getExtras().getString("scheduleCode");
-        String scheduleTime = intent.getExtras().getString("scheduleTime");
         int scheduleId = intent.getExtras().getInt("scheduleId");
 
         myHelper = new MainActivity.myDBHelper(context);
@@ -119,10 +118,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
         }
         sqlDB.close();
-
     }
-
-
-
 }
 

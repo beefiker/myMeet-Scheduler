@@ -44,9 +44,6 @@ import java.util.Objects;
 public class DetailActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener{
 
     static int STATIC_ID = 0;
-
-    int nowSelectedDay;
-
     EditText editName, editCode, editTime, editContent;
     Button btnUpdate;
     ImageButton addReview;
@@ -58,9 +55,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
     ActionBar.LayoutParams layoutparams;
     Typeface[] sCoreDreams = new Typeface[9];
 
-
     String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
-    int[] dayCounts = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     int selectedDay = 0;
 
     @Override
@@ -74,6 +69,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         selectedDay = position;
         System.out.println(position + " selected");
     }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @Override
@@ -89,7 +85,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
         spinner.setOnItemSelectedListener(this);
         Drawable spinnerDrawable = spinner.getBackground().getConstantState().newDrawable();
-
         spinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -156,7 +151,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(alarmDate.substring(8,10)));
         cal.set(Calendar.MINUTE, Integer.parseInt(alarmDate.substring(10,12)));
         cal.set(Calendar.SECOND, Integer.parseInt(alarmDate.substring(12,14)));
-
 
         switch (day){
             case 1:
@@ -252,7 +246,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         }
 
         final int dbDay = nDay;
-        System.out.println(dbDay);
         btnUpdate.setOnClickListener(view -> {
             String updateName = editName.getText().toString();
             String updateCode = editCode.getText().toString();
@@ -298,7 +291,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             if(dayGap < 0){
                 cal.add(Calendar.DATE, Math.abs(dayGap));
             }else if(dayGap > 0){
-                if(timeGap > 777600){ //1week 604800
+                if(timeGap > 777600){ // 1week = 604800
                     cal.add(Calendar.DATE, -(7-dayGap+2));
                 }else{
                     cal.add(Calendar.DATE, (7-dayGap));
@@ -423,8 +416,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         cursor1.close();
         sqlDB.close();
     }
-
-
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}

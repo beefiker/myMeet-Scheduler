@@ -71,8 +71,8 @@ public class RingtonePlayingService extends Service {
             startForeground(getId, notification);
             stopForeground(false);
             Toast.makeText(this, "Subject : "+getName+"\nCode : "+getCode, Toast.LENGTH_LONG).show();
-
         }
+
         assert getState != null;
         switch (getState) {
             case "alarm on":
@@ -85,7 +85,6 @@ public class RingtonePlayingService extends Service {
                 startId = 0;
                 break;
         }
-
         // 알람음 재생 X , 알람음 시작 클릭
         if(!this.isRunning && startId == 1) {
 
@@ -95,7 +94,6 @@ public class RingtonePlayingService extends Service {
             this.isRunning = true;
             this.startId = 0;
         }
-
         // 알람음 재생 O , 알람음 종료 버튼 클릭
         else if(this.isRunning && startId == 0) {
 
@@ -106,7 +104,6 @@ public class RingtonePlayingService extends Service {
             this.isRunning = false;
             this.startId = 0;
         }
-
         // 알람음 재생 X , 알람음 종료 버튼 클릭
         else if(!this.isRunning && startId == 0) {
 
@@ -114,16 +111,13 @@ public class RingtonePlayingService extends Service {
             this.startId = 0;
 
         }
-
-        // 알람음 재생 O , 알람음 시작 버튼 클릭
+        // 알람음 재생 O, 알람음 시작 버튼 클릭
         else if(this.isRunning && startId == 1){
 
             this.isRunning = true;
             this.startId = 1;
         }
 
-        else {
-        }
         return START_NOT_STICKY;
     }
 

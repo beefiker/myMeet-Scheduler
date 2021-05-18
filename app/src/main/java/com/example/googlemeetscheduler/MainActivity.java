@@ -369,14 +369,12 @@ public class MainActivity extends AppCompatActivity {
                 myIntent.putExtra("scheduleId", thisId);
                 myIntent.putExtra("scheduleName", scheduleName);
                 myIntent.putExtra("scheduleCode", scheduleCode);
-                myIntent.putExtra("scheduleTime", scheduleTime);
                 myIntent.putExtra("alarmDate", alarmDate);
             }else{
                 myIntent.putExtra("state", "off");
                 myIntent.putExtra("scheduleId", thisId);
                 myIntent.putExtra("scheduleName", scheduleName);
                 myIntent.putExtra("scheduleCode", scheduleCode);
-                myIntent.putExtra("scheduleTime", scheduleTime);
                 myIntent.putExtra("alarmDate", alarmDate);
             }
 
@@ -413,6 +411,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("YES", (dialog, which) -> {
                             sqlDB = myHelper.getWritableDatabase();
                             sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
+                            sqlDB.execSQL("delete from alarmDetailTable where id = '"+ thisId +"'");
                             sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
                             sqlDB.close();
                             cancelAlarm(thisId);
