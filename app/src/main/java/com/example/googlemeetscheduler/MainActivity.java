@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY, day INTEGER, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
             db.execSQL("create table memoTable (num INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, regdate TEXT)");
-            db.execSQL("create table alarmDetailTable (id INTEGER PRIMARY KEY, date TEXT)");
+            db.execSQL("create table alarmDetailTable (id INTEGER PRIMARY KEY, date TEXT, alarmbefore INTEGER)");
         }
 
         @Override
@@ -339,6 +339,7 @@ public class MainActivity extends AppCompatActivity {
             Cursor alarmCursor = sqlDB.rawQuery("select * from alarmDetailTable where id = "+ thisId, null);
             alarmCursor.moveToNext();
             final String alarmDate = alarmCursor.getString(1);
+            final int alarmBefore = alarmCursor.getInt(2);
 
             final Calendar calendar = new GregorianCalendar();
             Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
@@ -354,6 +355,7 @@ public class MainActivity extends AppCompatActivity {
 
             assert datetime != null;
             calendar.setTime(datetime);
+            calendar.add(Calendar.MINUTE, -alarmBefore);
 
             if(scheduleActivation.equals("true")){
                 myIntent.putExtra("state", "on");

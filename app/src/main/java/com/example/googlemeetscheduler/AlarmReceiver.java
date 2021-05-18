@@ -40,6 +40,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         if(alarmCursor1.getCount() > 0) {
             alarmCursor1.moveToFirst();
             final String alarmDate = alarmCursor1.getString(1);
+            final int alarmBefore = alarmCursor1.getInt(2);
 
             String[] splitDates = alarmDate.split(" ");
             String[] dates = splitDates[0].split("-");

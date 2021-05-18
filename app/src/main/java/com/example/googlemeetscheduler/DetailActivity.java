@@ -41,7 +41,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
-public class DetailActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener{
+public class DetailActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
+{
 
     static int STATIC_ID = 0;
     EditText editName, editCode, editTime, editContent;
@@ -52,10 +53,11 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
     myDBHelper myHelper;
     SQLiteDatabase sqlDB;
     LinearLayout detailContainer, layoutContainer;
-    ActionBar.LayoutParams layoutparams;
+    ActionBar.LayoutParams layoutParams;
     Typeface[] sCoreDreams = new Typeface[9];
 
     String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+    String[] alarms = {"0m","5m","10m","15m","30m","1h"};
     int selectedDay = 0;
 
     @Override
@@ -70,6 +72,21 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         System.out.println(position + " selected");
     }
 
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+     class DaysSpinnerClass implements AdapterView.OnItemSelectedListener{
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
+            selectedDay = position;
+            System.out.println("selectedDay = " + selectedDay);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {}
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @Override
@@ -79,16 +96,23 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
 
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-        Spinner spinner = findViewById(R.id.daySpin);
-        ArrayAdapter<String> adpter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
-        spinner.setAdapter(adpter);
-        spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
-        spinner.setOnItemSelectedListener(this);
-        Drawable spinnerDrawable = spinner.getBackground().getConstantState().newDrawable();
+        Spinner spin1 = findViewById(R.id.daySpin);
+        Spinner spin2 = findViewById(R.id.alarmSpin);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, alarms);
+        spin1.setAdapter(adapter);
+        spin2.setAdapter(adapter2);
+        spin1.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
+        spin1.setOnItemSelectedListener(new DaysSpinnerClass());
+        spin2.setOnItemSelectedListener(null);
+        Drawable spinnerDrawable = spin1.getBackground().getConstantState().newDrawable();
         spinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
+        Drawable spinnerDrawable1 = spin1.getBackground().getConstantState().newDrawable();
+        spinnerDrawable1.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            spinner.setBackground(spinnerDrawable);
+            spin1.setBackground(spinnerDrawable);
+            spin2.setBackground(spinnerDrawable1);
         }
 
         layoutContainer = findViewById(R.id.layoutContainer);
@@ -140,7 +164,30 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         Cursor alarmCursor = sqlDB.rawQuery("select * from alarmDetailTable where id = "+ STATIC_ID, null);
         alarmCursor.moveToNext();
         String alarmDate = alarmCursor.getString(1);
+        int alarmBefore = alarmCursor.getInt(2);
         alarmCursor.close();
+        switch (alarmBefore){
+            case 0:
+                alarmBefore = 0;
+                break;
+            case 5:
+                alarmBefore = 1;
+                break;
+            case 10:
+                alarmBefore = 2;
+                break;
+            case 15:
+                alarmBefore = 3;
+                break;
+            case 30:
+                alarmBefore = 4;
+                break;
+            default:
+                alarmBefore = 5;
+                break;
+        }
+        spin2.setSelection(alarmBefore);
+
         alarmDate = alarmDate.replaceAll("[^0-9]","");
         System.out.println("alarm : " + alarmDate);
         Calendar cal = Calendar.getInstance();
@@ -175,10 +222,10 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
                 day = 5;
                 break;
         }
-        spinner.setSelection(day);
+        spin1.setSelection(day);
 
-        layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-        textview.setLayoutParams(layoutparams);
+        layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        textview.setLayoutParams(layoutParams);
         textview.setText(name);
         textview.setTextColor(Color.rgb(33,33,33));
         textview.setTypeface(sCoreDreams[4]);
@@ -250,7 +297,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             String updateName = editName.getText().toString();
             String updateCode = editCode.getText().toString();
             boolean updateAct = !editActivation.getText().toString().equals("false");
-            int updateDay = spinner.getSelectedItemPosition();
+            int updateDay = spin1.getSelectedItemPosition();
             switch(updateDay){
                 case 6:
                     updateDay = 1;
@@ -285,8 +332,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
 
             Calendar systemCal = Calendar.getInstance();
 
-            int timeGap = (int) (cal.getTimeInMillis() - systemCal.getTimeInMillis());
-
             int dayGap = dbDay - selectedDay;
             if(dayGap < 0){
                 cal.add(Calendar.DATE, Math.abs(dayGap));
@@ -305,7 +350,28 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             String newDate = String.valueOf(date);
             if(newDate.length() < 2) newDate = "0"+newDate;
             String updateDate = year +"-"+newMon+"-"+newDate+" "+tmp+":00";
-            sqlDB.execSQL("update alarmDetailTable set date = '"+updateDate+"'  where id = '"+ STATIC_ID +"' ");
+            int updateBefore = spin2.getSelectedItemPosition();
+            switch(updateBefore){
+                case 0:
+                    updateBefore = 0;
+                    break;
+                case 1:
+                    updateBefore = 5;
+                    break;
+                case 2:
+                    updateBefore = 10;
+                    break;
+                case 3:
+                    updateBefore = 15;
+                    break;
+                case 4:
+                    updateBefore = 30;
+                    break;
+                default:
+                    updateBefore = 60;
+                    break;
+            }
+            sqlDB.execSQL("update alarmDetailTable set date = '"+updateDate+"', alarmbefore = '"+updateBefore+"'  where id = '"+ STATIC_ID +"' ");
             sqlDB.close();
             startActivity(intent1);
             finish();
@@ -416,9 +482,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         sqlDB.close();
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {}
-
     public static class myDBHelper extends SQLiteOpenHelper {
         public myDBHelper(@Nullable Context context) {
             super(context, "meetDB", null, 1);
@@ -428,7 +491,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY, day INTEGER, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
             db.execSQL("create table memoTable (num INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, regdate TEXT)");
-            db.execSQL("create table alarmDetailTable (id INTEGER PRIMARY KEY, date TEXT)");
+            db.execSQL("create table alarmDetailTable (id INTEGER PRIMARY KEY, date TEXT, alarmbefore INTEGER)");
         }
 
         @Override
@@ -439,4 +502,6 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             onCreate(db);
         }
     }
+
+
 }

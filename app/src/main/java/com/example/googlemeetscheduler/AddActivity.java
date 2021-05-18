@@ -31,7 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Calendar;
 import java.util.Objects;
 
-public class AddActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class AddActivity extends AppCompatActivity {
     Button addSchedule;
     EditText editName, editTime, editCode;
     myDBHelper myHelper;
@@ -40,8 +40,10 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
     Typeface[] sCoreDreams = new Typeface[9];
 
     String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+    String[] alarms = {"0m","5m","10m","15m","30m","1h"};
     int[] dayCounts = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     int selectedDay = 0;
+    int selectedAlarmBefore = 0;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -58,11 +60,18 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subactivity_main);
 
-        Spinner spinner = findViewById(R.id.daySpin);
+        Spinner spin = (Spinner) findViewById(R.id.daySpin);
+        spin.setOnItemSelectedListener(new DaysSpinnerClass());
+
+        Spinner spin2 = (Spinner) findViewById(R.id.alarmSpin);
+        spin2.setOnItemSelectedListener(new AlarmsSpinnerClass());
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
-        spinner.setAdapter(adapter);
-        spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
-        spinner.setOnItemSelectedListener(this);
+        spin.setAdapter(adapter);
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, alarms);
+        spin2.setAdapter(adapter2);
+        spin.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
+        spin2.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
         Calendar cale = Calendar.getInstance();
         int nowDay = cale.get(Calendar.DAY_OF_WEEK);
         switch (nowDay){
@@ -88,13 +97,16 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
                 nowDay = 5;
                 break;
         }
-        spinner.setSelection(nowDay);
-        Drawable spinnerDrawable = spinner.getBackground().getConstantState().newDrawable();
+        spin.setSelection(nowDay);
+        Drawable spinnerDrawable = spin.getBackground().getConstantState().newDrawable();
+        Drawable spinnerDrawable1 = spin2.getBackground().getConstantState().newDrawable();
 
         spinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
+        spinnerDrawable1.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            spinner.setBackground(spinnerDrawable);
+            spin.setBackground(spinnerDrawable);
+            spin2.setBackground(spinnerDrawable1);
         }
         for (int i = 0; i < sCoreDreams.length-1; i++){
             sCoreDreams[i] =  Typeface.createFromAsset(getAssets(), "SCDream"+(i+1)+".otf");
@@ -205,7 +217,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
                     sqlDB = myHelper.getWritableDatabase();
                     String tmp = hourMin[0] + ":"+ hourMin[1];
                     sqlDB.execSQL("insert into scheduleTable(id, day, course, code, alarmTime, activation) values ('"+ idm + "','"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+true+"');");
-                    sqlDB.execSQL("insert into alarmDetailTable(id, date) values ('"+ idm + "','"+ newForm + "');");
+                    sqlDB.execSQL("insert into alarmDetailTable(id, date, alarmbefore) values ('"+ idm + "','"+ newForm + "','"+selectedAlarmBefore+"');");
                     sqlDB.close();
                     openMain();
 
@@ -224,20 +236,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
 
     }
 
-    @SuppressLint("ResourceAsColor")
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        selectedDay = days[position].equals("월요일") ? 2 :
-                        days[position].equals("화요일") ? 3 :
-                        days[position].equals("수요일") ? 4 :
-                        days[position].equals("목요일") ? 5 :
-                        days[position].equals("금요일") ? 6 :
-                        days[position].equals("토요일") ? 7 :
-                        days[position].equals("일요일") ? 1 : 1;
-    }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) { }
 
     public class myDBHelper extends SQLiteOpenHelper {
         public myDBHelper(@Nullable Context context) {
@@ -248,7 +247,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY AUTOINCREMENT, day INTEGER, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
             db.execSQL("create table memoTable (num INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, regdate TEXT)");
-            db.execSQL("create table alarmDetailTable (id INTEGER PRIMARY KEY, date TEXT)");
+            db.execSQL("create table alarmDetailTable (id INTEGER PRIMARY KEY, date TEXT, alarmbefore INTEGER)");
         }
 
         @Override
@@ -258,5 +257,39 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
             db.execSQL("drop table if exists alarmDetailTable");
             onCreate(db);
         }
+    }
+
+    class DaysSpinnerClass implements AdapterView.OnItemSelectedListener{
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
+            selectedDay = days[position].equals("월요일") ? 2 :
+                            days[position].equals("화요일") ? 3 :
+                            days[position].equals("수요일") ? 4 :
+                            days[position].equals("목요일") ? 5 :
+                            days[position].equals("금요일") ? 6 :
+                            days[position].equals("토요일") ? 7 :
+                            days[position].equals("일요일") ? 1 : 1;
+            System.out.println("selectedDay = " + selectedDay);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {}
+    }
+
+    class AlarmsSpinnerClass implements AdapterView.OnItemSelectedListener{
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
+            selectedAlarmBefore = alarms[position].equals("5m") ? 5 :
+                                    alarms[position].equals("10m") ? 10 :
+                                    alarms[position].equals("15m") ? 15 :
+                                    alarms[position].equals("30m") ? 30 :
+                                    alarms[position].equals("1h") ? 60 : 0;
+            System.out.println("selectedAlarmBefore = " + selectedAlarmBefore);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {}
     }
 }
