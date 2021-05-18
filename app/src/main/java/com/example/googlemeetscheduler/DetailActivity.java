@@ -133,7 +133,29 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         time = cursor.getString(4);
         activation = cursor.getString(5);
 
-
+        switch (day){
+            case 1:
+                day = 6;
+                break;
+            case 2:
+                day = 0;
+                break;
+            case 3:
+                day = 1;
+                break;
+            case 4:
+                day = 2;
+                break;
+            case 5:
+                day = 3;
+                break;
+            case 6:
+                day = 4;
+                break;
+            default:
+                day = 5;
+                break;
+        }
         spinner.setSelection(day);
 
         layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
@@ -191,6 +213,8 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             String tmp = hourMin[0] + ":"+ hourMin[1];
             sqlDB = myHelper.getWritableDatabase();
             sqlDB.execSQL("update scheduleTable set day = '"+updateDay+"', course = '"+updateName+"', code = '"+updateCode+"', alarmTime = '"+tmp+"', activation = '"+updateAct+"'  where id = '"+ thisId +"' ");
+            // 알람테이블도 업데이트 필요
+//            sqlDB.execSQL("update alarmDetailTable set date = '"+"some date"+"'  where id = '"+ STATIC_ID +"' ");
             sqlDB.close();
             Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent1);

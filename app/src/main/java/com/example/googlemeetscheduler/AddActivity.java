@@ -58,7 +58,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
         return true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +70,31 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
         spinner.setAdapter(adpter);
         spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
         spinner.setOnItemSelectedListener(this);
+        int nowDay = LocalDate.now().getDayOfWeek().getValue();
+        switch (nowDay){
+            case 1:
+                nowDay = 0;
+                break;
+            case 2:
+                nowDay = 1;
+                break;
+            case 3:
+                nowDay = 2;
+                break;
+            case 4:
+                nowDay = 3;
+                break;
+            case 5:
+                nowDay = 4;
+                break;
+            case 6:
+                nowDay = 5;
+                break;
+            case 7:
+                nowDay = 6;
+                break;
+        }
+        spinner.setSelection(nowDay);
         Drawable spinnerDrawable = spinner.getBackground().getConstantState().newDrawable();
 
         spinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);

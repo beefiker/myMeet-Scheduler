@@ -105,18 +105,19 @@ public class AlarmReceiver extends BroadcastReceiver {
                 service_intent.putExtra("state", "alarm on");
                 service_intent.putExtra("name", scheduleName);
                 service_intent.putExtra("code", scheduleCode);
+                service_intent.putExtra("id", scheduleId);
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                     this.context.startForegroundService(service_intent);
                 }else{
                     this.context.startService(service_intent);
                 }
-                Toast.makeText(context,
-                        "이름 : " + scheduleName + "\n"
-                                + "코드 : " + scheduleCode + "\n"
-                                + "시간 : " + scheduleTime + "\n"
-                                + "아이디 : " + scheduleId + "\n"
-                                + alarmDate,
-                        Toast.LENGTH_LONG).show();
+//                Toast.makeText(context,
+//                        "이름 : " + scheduleName + "\n"
+//                                + "코드 : " + scheduleCode + "\n"
+//                                + "시간 : " + scheduleTime + "\n"
+//                                + "아이디 : " + scheduleId + "\n"
+//                                + alarmDate,
+//                        Toast.LENGTH_LONG).show();
             }
         }
         sqlDB.close();
