@@ -45,6 +45,8 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
 
     static int STATIC_ID = 0;
 
+    int nowSelectedDay;
+
     EditText editName, editCode, editTime, editContent;
     Button btnUpdate;
     ImageButton addReview;
@@ -56,7 +58,9 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
     ActionBar.LayoutParams layoutparams;
     Typeface[] sCoreDreams = new Typeface[9];
 
+
     String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+    int[] dayCounts = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     int selectedDay = 0;
 
     @Override
@@ -65,7 +69,11 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         finish();
         return true;
     }
-
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        selectedDay = position;
+        System.out.println(position + " selected");
+    }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @Override
@@ -111,7 +119,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         int color_G = intent.getIntExtra("color_G", 0);
         int color_B = intent.getIntExtra("color_B", 0);
         int id = intent.getIntExtra("id", 0);
-        int day;
+        int day; // day of week
         String name, code, time;
         String activation;
 
@@ -128,10 +136,27 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         cursor.moveToNext();
         final int thisId = cursor.getInt(0);
         day = cursor.getInt(1);
+        int nDay = cursor.getInt(1);
         name = cursor.getString(2);
         code = cursor.getString(3);
         time = cursor.getString(4);
         activation = cursor.getString(5);
+
+        Cursor alarmCursor = sqlDB.rawQuery("select * from alarmDetailTable where id = "+ STATIC_ID, null);
+        alarmCursor.moveToNext();
+        String alarmDate = alarmCursor.getString(1);
+        alarmCursor.close();
+        alarmDate = alarmDate.replaceAll("[^0-9]","");
+        System.out.println("alarm : " + alarmDate);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, Integer.parseInt(alarmDate.substring(0,4)));
+        cal.set(Calendar.MONTH, Integer.parseInt(alarmDate.substring(4,6))-1);
+        cal.set(Calendar.DATE, Integer.parseInt(alarmDate.substring(6,8)));
+
+        cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(alarmDate.substring(8,10)));
+        cal.set(Calendar.MINUTE, Integer.parseInt(alarmDate.substring(10,12)));
+        cal.set(Calendar.SECOND, Integer.parseInt(alarmDate.substring(12,14)));
+
 
         switch (day){
             case 1:
@@ -202,6 +227,32 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             timePickerDialog.show();
         });
 
+        switch (nDay){
+            case 1:
+                nDay = 6;
+                break;
+            case 2:
+                nDay = 0;
+                break;
+            case 3:
+                nDay = 1;
+                break;
+            case 4:
+                nDay = 2;
+                break;
+            case 5:
+                nDay = 3;
+                break;
+            case 6:
+                nDay = 4;
+                break;
+            case 7:
+                nDay = 5;
+                break;
+        }
+
+        final int dbDay = nDay;
+        System.out.println(dbDay);
         btnUpdate.setOnClickListener(view -> {
             String updateName = editName.getText().toString();
             String updateCode = editCode.getText().toString();
@@ -214,9 +265,28 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             sqlDB = myHelper.getWritableDatabase();
             sqlDB.execSQL("update scheduleTable set day = '"+updateDay+"', course = '"+updateName+"', code = '"+updateCode+"', alarmTime = '"+tmp+"', activation = '"+updateAct+"'  where id = '"+ thisId +"' ");
             // 알람테이블도 업데이트 필요
-//            sqlDB.execSQL("update alarmDetailTable set date = '"+"some date"+"'  where id = '"+ STATIC_ID +"' ");
-            sqlDB.close();
+
             Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
+
+            int dayGap = dbDay - selectedDay;
+            if(dayGap < 0){
+//                date += dayGap;
+                cal.add(Calendar.DATE, Math.abs(dayGap));
+            }else if(dayGap > 0){
+//                date = date + (7-dayGap);
+                cal.add(Calendar.DATE, (7-dayGap));
+            }
+
+            int year = cal.get(Calendar.YEAR);
+            int mon = cal.get(Calendar.MONTH) + 1;
+            String newMon = String.valueOf(mon);
+            if(newMon.length() < 2) newMon = "0"+newMon;
+            int date = cal.get(Calendar.DATE);
+            String newDate = String.valueOf(date);
+            if(newDate.length() < 2) newDate = "0"+newDate;
+            String updateDate = year +"-"+newMon+"-"+newDate+" "+tmp+":00";
+            sqlDB.execSQL("update alarmDetailTable set date = '"+updateDate+"'  where id = '"+ STATIC_ID +"' ");
+            sqlDB.close();
             startActivity(intent1);
             finish();
         });
@@ -326,8 +396,7 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
         sqlDB.close();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {}
+
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {}
