@@ -3,6 +3,7 @@ package com.example.googlemeetscheduler;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,16 @@ public class RingtonePlayingService extends Service {
     public void onCreate() {
         super.onCreate();
 
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        String getState = intent.getExtras().getString("state");
+        String getName = intent.getExtras().getString("name");
+        String getCode = intent.getExtras().getString("code");
+
         if (Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "default";
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
@@ -38,21 +49,21 @@ public class RingtonePlayingService extends Service {
 
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
 
-            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("수업 들어야지")
-                    .setContentText("알람음이 재생됩니다.")
-                    .setSmallIcon(R.mipmap.ic_launcher)
+            Intent snoozeIntent = new Intent(this, RingtonePlayingService.class);
+            snoozeIntent.setAction(Intent.ACTION_SCREEN_ON);
+            snoozeIntent.putExtra("status", "alarm off");
+            PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(this, 0, snoozeIntent, 0);
 
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle(getName)
+                    .setContentText(getCode)
+                    .setSmallIcon(R.drawable.ic_baseline_notifications_24)
+                    .addAction(R.drawable.ic_baseline_arrow_back_24, "SNOOZE", snoozePendingIntent)
+                    .setAutoCancel(true)
                     .build();
 
             startForeground(1, notification);
         }
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        String getState = intent.getExtras().getString("state");
-
         assert getState != null;
         switch (getState) {
             case "alarm on":
@@ -101,6 +112,9 @@ public class RingtonePlayingService extends Service {
             this.isRunning = true;
             this.startId = 1;
         }
+
+        else {
+        }
         return START_NOT_STICKY;
     }
 
@@ -109,5 +123,6 @@ public class RingtonePlayingService extends Service {
         super.onDestroy();
 
         Log.d("onDestory() 실행", "서비스 파괴");
+
     }
 }

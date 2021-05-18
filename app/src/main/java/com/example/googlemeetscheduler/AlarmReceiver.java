@@ -2,6 +2,7 @@ package com.example.googlemeetscheduler;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,12 +14,14 @@ import android.os.SystemClock;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static java.time.LocalDateTime.now;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -26,11 +29,15 @@ public class AlarmReceiver extends BroadcastReceiver {
     MainActivity.myDBHelper myHelper;
     SQLiteDatabase sqlDB;
 
+    Context context;
+
     int[] dayCounts = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        this.context = context;
 
         String state = intent.getExtras().getString("state");
         String scheduleName = intent.getExtras().getString("scheduleName");
@@ -94,6 +101,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                 sqlDB = myHelper.getWritableDatabase();
                 sqlDB.execSQL("update alarmDetailTable set date = '"+newForm+"' where id = '"+scheduleId+"' ");
                 sqlDB.close();
+                Intent service_intent = new Intent(context, RingtonePlayingService.class);
+                service_intent.putExtra("state", "alarm on");
+                service_intent.putExtra("name", scheduleName);
+                service_intent.putExtra("code", scheduleCode);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                    this.context.startForegroundService(service_intent);
+                }else{
+                    this.context.startService(service_intent);
+                }
                 Toast.makeText(context,
                         "이름 : " + scheduleName + "\n"
                                 + "코드 : " + scheduleCode + "\n"
@@ -106,5 +122,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         sqlDB.close();
 
     }
+
+
+
 }
 
