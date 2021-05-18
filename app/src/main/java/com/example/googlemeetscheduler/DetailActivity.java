@@ -427,12 +427,16 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            db.execSQL("create table scheduleTable (id INTEGER PRIMARY KEY, day INTEGER, course TEXT, code TEXT, alarmTime TEXT, activation TEXT)");
             db.execSQL("create table memoTable (num INTEGER, id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, regdate TEXT)");
+            db.execSQL("create table alarmDetailTable (id INTEGER PRIMARY KEY, date TEXT)");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL("drop table if exists scheduleTable");
+            db.execSQL("drop table if exists memoTable");
+            db.execSQL("drop table if exists alarmDetailTable");
             onCreate(db);
         }
     }

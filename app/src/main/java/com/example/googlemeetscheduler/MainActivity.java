@@ -384,8 +384,17 @@ public class MainActivity extends AppCompatActivity {
             long currMillis = System.currentTimeMillis();
             if(calMillis > currMillis){
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
-            }
+            }else{
 
+                myIntent.putExtra("state", "off");
+                myIntent.putExtra("scheduleId", thisId);
+                myIntent.putExtra("scheduleName", scheduleName);
+                myIntent.putExtra("scheduleCode", scheduleCode);
+                myIntent.putExtra("alarmDate", alarmDate);
+                PendingIntent appIntent1 = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent1);
+            }
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
             aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 sqlDB = myHelper.getWritableDatabase();
                     if(isChecked){

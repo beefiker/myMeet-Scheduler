@@ -110,7 +110,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 }else{
                     this.context.startService(service_intent);
                 }
-            }else{
+            }else if(state.equals("off")){
                 Toast.makeText(context, "업데이트됨", Toast.LENGTH_SHORT).show();
                 sqlDB = myHelper.getWritableDatabase();
                 sqlDB.execSQL("update alarmDetailTable set date = '"+newForm+"' where id = '"+scheduleId+"' ");
