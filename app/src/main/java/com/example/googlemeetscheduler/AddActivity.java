@@ -153,7 +153,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
         addSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!editName.getText().toString().equals("") && editName.getText().toString().length() > 0 && editTime.getText().toString().length() > 0){
+                if(!editName.getText().toString().equals("") && editName.getText().toString().length() > 0 && editTime.getText().toString().length() > 1){
 
                     Calendar calendar = Calendar.getInstance();
                     int nowYear = calendar.get(Calendar.YEAR);
@@ -208,9 +208,6 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
                     String newForm = nowYear +"-"+ sMonth +"-"+ sDayOfMonth +" ";
                     newForm += hourMin[0]+":"+hourMin[1]+":00";
 
-
-
-
                     sqlDB = myHelper.getWritableDatabase();
                     String tmp = hourMin[0] + ":"+ hourMin[1];
                     sqlDB.execSQL("insert into scheduleTable(id, day, course, code, alarmTime, activation) values ('"+ idm + "','"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+true+"');");
@@ -218,13 +215,10 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
                     sqlDB.close();
                     openMain();
 
-                }else if(editTime.getText().toString().equals("") && editTime.getText().toString().length() < 1){
-                    sqlDB = myHelper.getWritableDatabase();
-                    sqlDB.execSQL("insert into scheduleTable(id, day, course, code, alarmTime, activation) values ('"+ idm + "','"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ "00:00" +"', '"+true+"');");
-                    sqlDB.close();
-                    openMain();
-                }else {
+                }else if(editName.getText().toString().equals("") && editName.getText().toString().length() < 1){
                     Toast.makeText(AddActivity.this, "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
+                }else if(editTime.getText().toString().equals("") && editTime.getText().toString().length() < 1){
+                    Toast.makeText(AddActivity.this, "시간을 설정해주세요", Toast.LENGTH_SHORT).show();
                 }
             }
 

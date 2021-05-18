@@ -111,13 +111,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                 }else{
                     this.context.startService(service_intent);
                 }
-//                Toast.makeText(context,
-//                        "이름 : " + scheduleName + "\n"
-//                                + "코드 : " + scheduleCode + "\n"
-//                                + "시간 : " + scheduleTime + "\n"
-//                                + "아이디 : " + scheduleId + "\n"
-//                                + alarmDate,
-//                        Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(context, "업데이트됨", Toast.LENGTH_SHORT).show();
+                sqlDB = myHelper.getWritableDatabase();
+                sqlDB.execSQL("update alarmDetailTable set date = '"+newForm+"' where id = '"+scheduleId+"' ");
+                sqlDB.close();
             }
         }
         sqlDB.close();

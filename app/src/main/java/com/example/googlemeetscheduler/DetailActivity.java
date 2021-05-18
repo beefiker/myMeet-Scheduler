@@ -258,22 +258,42 @@ public class DetailActivity extends AppCompatActivity  implements AdapterView.On
             String updateCode = editCode.getText().toString();
             boolean updateAct = !editActivation.getText().toString().equals("false");
             int updateDay = spinner.getSelectedItemPosition();
+            switch(updateDay){
+                case 6:
+                    updateDay = 1;
+                    break;
+                case 0:
+                    updateDay = 2;
+                    break;
+                case 1:
+                    updateDay = 3;
+                    break;
+                case 2:
+                    updateDay = 4;
+                    break;
+                case 3:
+                    updateDay = 5;
+                    break;
+                case 4:
+                    updateDay = 6;
+                    break;
+                default:
+                    updateDay = 7;
+                    break;
+            }
             String[] hourMin = editTime.getText().toString().split(":");
             if(hourMin[0].length() < 2) hourMin[0] = "0"+hourMin[0];
             if(hourMin[1].length() < 2) hourMin[1] = "0"+hourMin[1];
             String tmp = hourMin[0] + ":"+ hourMin[1];
             sqlDB = myHelper.getWritableDatabase();
             sqlDB.execSQL("update scheduleTable set day = '"+updateDay+"', course = '"+updateName+"', code = '"+updateCode+"', alarmTime = '"+tmp+"', activation = '"+updateAct+"'  where id = '"+ thisId +"' ");
-            // 알람테이블도 업데이트 필요
 
             Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
 
             int dayGap = dbDay - selectedDay;
             if(dayGap < 0){
-//                date += dayGap;
                 cal.add(Calendar.DATE, Math.abs(dayGap));
             }else if(dayGap > 0){
-//                date = date + (7-dayGap);
                 cal.add(Calendar.DATE, (7-dayGap));
             }
 

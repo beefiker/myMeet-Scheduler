@@ -46,6 +46,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
@@ -372,6 +373,11 @@ public class MainActivity extends AppCompatActivity {
                 myIntent.putExtra("alarmDate", alarmDate);
             }else{
                 myIntent.putExtra("state", "off");
+                myIntent.putExtra("scheduleId", thisId);
+                myIntent.putExtra("scheduleName", scheduleName);
+                myIntent.putExtra("scheduleCode", scheduleCode);
+                myIntent.putExtra("scheduleTime", scheduleTime);
+                myIntent.putExtra("alarmDate", alarmDate);
             }
 
             PendingIntent appIntent = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -388,8 +394,9 @@ public class MainActivity extends AppCompatActivity {
                         sqlDB.execSQL("update scheduleTable set activation = '"+true+"' where id = '"+ thisId +"'");
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
                     }else{
-                        cancelAlarm(thisId);
+//                        cancelAlarm(thisId);
                         sqlDB.execSQL("update scheduleTable set activation = '"+false+"' where id = '"+ thisId +"'");
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
                     }
                 sqlDB.close();
             });
