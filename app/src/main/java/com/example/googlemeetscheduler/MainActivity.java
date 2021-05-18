@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
             int color_B;
 
             switch(day){
-                case 0:
+                case 2:
                     color_R = 255;
                     color_G = 214;
                     color_B = 165;
@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255, 239, 71, 111));
                     schName.setTextColor(Color.argb(255, 239, 71, 111));
                     break;
-                case 1:
+                case 3:
                     color_R = 253;
                     color_G = 255;
                     color_B = 182;
@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255, 244, 162, 97));
                     schName.setTextColor(Color.argb(205, 244, 162, 97));
                     break;
-                case 2:
+                case 4:
                     color_R = 202;
                     color_G = 255;
                     color_B = 191;
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255, 6, 214, 160));
                     schName.setTextColor(Color.argb(255, 6, 214, 160));
                     break;
-                case 3:
+                case 5:
                     color_R = 155;
                     color_G = 246;
                     color_B = 255;
@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255, 17,138,178));
                     schName.setTextColor(Color.argb(255, 17,138,178));
                     break;
-                case 4:
+                case 6:
                     color_R = 160;
                     color_G = 196;
                     color_B = 255;
@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255,  7,59,78));
                     schName.setTextColor(Color.argb(255,  7,59,78));
                     break;
-                case 5:
+                case 7:
                     color_R = 255;
                     color_G = 198;
                     color_B = 255;
