@@ -1,28 +1,15 @@
 package com.example.googlemeetscheduler;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.os.SystemClock;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Date;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static java.time.LocalDateTime.now;
 
 public class AlarmReceiver extends BroadcastReceiver {
 

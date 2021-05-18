@@ -28,14 +28,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class AddActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -43,7 +36,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
     EditText editName, editTime, editCode;
     myDBHelper myHelper;
     SQLiteDatabase sqlDB;
-    ActionBar.LayoutParams layoutparams;
+    ActionBar.LayoutParams layoutParams;
     Typeface[] sCoreDreams = new Typeface[9];
 
     String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
@@ -66,32 +59,33 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
         setContentView(R.layout.subactivity_main);
 
         Spinner spinner = findViewById(R.id.daySpin);
-        ArrayAdapter<String> adpter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
-        spinner.setAdapter(adpter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
+        spinner.setAdapter(adapter);
         spinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
         spinner.setOnItemSelectedListener(this);
-        int nowDay = LocalDate.now().getDayOfWeek().getValue();
+        Calendar cale = Calendar.getInstance();
+        int nowDay = cale.get(Calendar.DAY_OF_WEEK);
         switch (nowDay){
             case 1:
-                nowDay = 0;
+                nowDay = 6;
                 break;
             case 2:
-                nowDay = 1;
+                nowDay = 0;
                 break;
             case 3:
-                nowDay = 2;
+                nowDay = 1;
                 break;
             case 4:
-                nowDay = 3;
+                nowDay = 2;
                 break;
             case 5:
-                nowDay = 4;
+                nowDay = 3;
                 break;
             case 6:
-                nowDay = 5;
+                nowDay = 4;
                 break;
             case 7:
-                nowDay = 6;
+                nowDay = 5;
                 break;
         }
         spinner.setSelection(nowDay);
@@ -110,8 +104,8 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
         ActionBar actionbar = getSupportActionBar();
         TextView textview = new TextView(getApplicationContext());
 
-        layoutparams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
-        textview.setLayoutParams(layoutparams);
+        layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        textview.setLayoutParams(layoutParams);
         textview.setText("Add Schedule");
         textview.setTextColor(R.color.darkyButNotDark);
         textview.setTypeface(sCoreDreams[4], Typeface.BOLD);
@@ -243,9 +237,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    public void onNothingSelected(AdapterView<?> parent) { }
 
     public class myDBHelper extends SQLiteOpenHelper {
         public myDBHelper(@Nullable Context context) {
