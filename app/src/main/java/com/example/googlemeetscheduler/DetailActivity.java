@@ -56,7 +56,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
     ActionBar.LayoutParams layoutParams;
     Typeface[] sCoreDreams = new Typeface[9];
 
-    String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+    String[] days = {"MON","TUE","WED","THU","FRI","SAT","SUN"};
     String[] alarms = {"0m","5m","10m","15m","30m","1h"};
     int selectedDay = 0;
 

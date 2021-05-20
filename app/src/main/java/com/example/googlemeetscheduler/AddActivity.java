@@ -39,7 +39,7 @@ public class AddActivity extends AppCompatActivity {
     ActionBar.LayoutParams layoutParams;
     Typeface[] sCoreDreams = new Typeface[9];
 
-    String[] days = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+    String[] days = {"MON","TUE","WED","THU","FRI","SAT","SUN"};
     String[] alarms = {"0m","5m","10m","15m","30m","1h"};
     int[] dayCounts = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     int selectedDay = 0;
@@ -233,10 +233,7 @@ public class AddActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
-
-
 
     public class myDBHelper extends SQLiteOpenHelper {
         public myDBHelper(@Nullable Context context) {
@@ -263,13 +260,13 @@ public class AddActivity extends AppCompatActivity {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View v, int position, long id){
-            selectedDay = days[position].equals("월요일") ? 2 :
-                            days[position].equals("화요일") ? 3 :
-                            days[position].equals("수요일") ? 4 :
-                            days[position].equals("목요일") ? 5 :
-                            days[position].equals("금요일") ? 6 :
-                            days[position].equals("토요일") ? 7 :
-                            days[position].equals("일요일") ? 1 : 1;
+            selectedDay = days[position].equals("MON") ? 2 :
+                            days[position].equals("TUE") ? 3 :
+                            days[position].equals("WED") ? 4 :
+                            days[position].equals("THU") ? 5 :
+                            days[position].equals("FRI") ? 6 :
+                            days[position].equals("SAT") ? 7 :
+                            days[position].equals("SUN") ? 1 : 1;
             System.out.println("selectedDay = " + selectedDay);
         }
 

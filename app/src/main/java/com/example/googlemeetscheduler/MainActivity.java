@@ -6,10 +6,12 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -32,12 +34,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -270,63 +273,83 @@ public class MainActivity extends AppCompatActivity {
             GradientDrawable shape = new GradientDrawable();
 
             int color_Alpha = 110;
-            int color_R;
-            int color_G;
-            int color_B;
+            int[] colorForBackground = new int[3];
+            int[] colorForText = new int[3];
 
             switch(day){
                 case 2:
-                    color_R = 255;
-                    color_G = 214;
-                    color_B = 165;
+                    colorForBackground[0] = 255;
+                    colorForBackground[1] = 214;
+                    colorForBackground[2] = 168;
+                    colorForText[0] = 239;
+                    colorForText[1] = 71;
+                    colorForText[2] = 111;
                     schDay.setText("MON");
                     schDay.setTextColor(Color.argb(255, 239, 71, 111));
                     schName.setTextColor(Color.argb(255, 239, 71, 111));
                     break;
                 case 3:
-                    color_R = 253;
-                    color_G = 255;
-                    color_B = 182;
+                    colorForBackground[0] = 253;
+                    colorForBackground[1] = 255;
+                    colorForBackground[2] = 182;
+                    colorForText[0] = 244;
+                    colorForText[1] = 162;
+                    colorForText[2] = 97;
                     schDay.setText("TUE");
                     schDay.setTextColor(Color.argb(255, 244, 162, 97));
                     schName.setTextColor(Color.argb(205, 244, 162, 97));
                     break;
                 case 4:
-                    color_R = 202;
-                    color_G = 255;
-                    color_B = 191;
+                    colorForBackground[0] = 202;
+                    colorForBackground[1] = 255;
+                    colorForBackground[2] = 191;
+                    colorForText[0] = 6;
+                    colorForText[1] = 214;
+                    colorForText[2] = 160;
                     schDay.setText("WED");
                     schDay.setTextColor(Color.argb(255, 6, 214, 160));
                     schName.setTextColor(Color.argb(255, 6, 214, 160));
                     break;
                 case 5:
-                    color_R = 155;
-                    color_G = 246;
-                    color_B = 255;
+                    colorForBackground[0] = 155;
+                    colorForBackground[1] = 246;
+                    colorForBackground[2] = 255;
+                    colorForText[0] = 17;
+                    colorForText[1] = 138;
+                    colorForText[2] = 178;
                     schDay.setText("THU");
                     schDay.setTextColor(Color.argb(255, 17,138,178));
                     schName.setTextColor(Color.argb(255, 17,138,178));
                     break;
                 case 6:
-                    color_R = 160;
-                    color_G = 196;
-                    color_B = 255;
+                    colorForBackground[0] = 160;
+                    colorForBackground[1] = 196;
+                    colorForBackground[2] = 255;
+                    colorForText[0] = 7;
+                    colorForText[1] = 59;
+                    colorForText[2] = 78;
                     schDay.setText("FRI");
                     schDay.setTextColor(Color.argb(255,  7,59,78));
                     schName.setTextColor(Color.argb(255,  7,59,78));
                     break;
                 case 7:
-                    color_R = 255;
-                    color_G = 198;
-                    color_B = 255;
+                    colorForBackground[0] = 255;
+                    colorForBackground[1] = 198;
+                    colorForBackground[2] = 255;
+                    colorForText[0] = 181;
+                    colorForText[1] = 23;
+                    colorForText[2] = 158;
                     schDay.setText("SAT");
                     schDay.setTextColor(Color.argb(255, 181, 23, 158));
                     schName.setTextColor(Color.argb(255, 181, 23, 158));
                     break;
                 default:
-                    color_R = 255;
-                    color_G = 173;
-                    color_B = 173;
+                    colorForBackground[0] = 255;
+                    colorForBackground[1] = 173;
+                    colorForBackground[2] = 173;
+                    colorForText[0] = 231;
+                    colorForText[1] = 57;
+                    colorForText[2] = 70;
                     schDay.setText("SUN");
                     schDay.setTextColor(Color.argb(255, 231,57,70));
                     schName.setTextColor(Color.argb(255, 231,57,70));
@@ -408,23 +431,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             });
             arrDeletes.get(count).setOnClickListener(view -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
-                builder.setTitle("Deletes").setMessage("Are you sure ? \nDelete " + scheduleName)
-                        .setPositiveButton("YES", (dialog, which) -> {
-                            sqlDB = myHelper.getWritableDatabase();
-                            sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
-                            sqlDB.execSQL("delete from alarmDetailTable where id = '"+ thisId +"'");
-                            sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
-                            sqlDB.close();
-                            cancelAlarm(thisId);
-                            showLists();
-                        }).setNegativeButton("NO", (dialog, which) -> {
-                            }).show();
+                ViewDialog alert = new ViewDialog(thisId, scheduleName, colorForText[0], colorForText[1], colorForText[2]);
+                alert.showDialog(MainActivity.this);
             });
 
-            int finalColor_R = color_R;
-            int finalColor_G = color_G;
-            int finalColor_B = color_B;
+            int finalColor_R = colorForBackground[0];
+            int finalColor_G = colorForBackground[1];
+            int finalColor_B = colorForBackground[2];
             hLayout.setOnClickListener(view -> {
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("color_Alpha", color_Alpha);
@@ -435,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             });
 
-            shape.setColor(Color.argb(color_Alpha, color_R, color_G, color_B));
+            shape.setColor(Color.argb(color_Alpha, colorForBackground[0], colorForBackground[1], colorForBackground[2]));
             shape.setCornerRadius(20);
             hLayout.setGravity(Gravity.LEFT);
             hLayout.setBackground(shape);
@@ -459,5 +472,49 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean isEnglishOrNumber(String s){
         return Pattern.matches("^[0-9a-zA-z]*$", s);
+    }
+
+    public class ViewDialog {
+
+        int thisId, colorR, colorG, colorB;
+        String scheduleName;
+        public ViewDialog(int thisId, String scheduleName, int cR, int cG, int cB) {
+            this.thisId = thisId;
+            this.scheduleName = scheduleName;
+            this.colorR = cR;
+            this.colorG = cG;
+            this.colorB = cB;
+        }
+
+        @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        public void showDialog(Activity activity) {
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            TextView itemName = dialog.findViewById(R.id.itemName);
+            itemName.setText("\" "+scheduleName+" \"");
+            itemName.setTextColor(Color.argb(255, colorR, colorG, colorB));
+            CardView cv = dialog.findViewById(R.id.cardV);
+            cv.setBackground(getDrawable(R.drawable.rounded_box));
+            FrameLayout mDialogNo = dialog.findViewById(R.id.frmNo);
+            mDialogNo.setOnClickListener(v -> dialog.dismiss());
+
+            FrameLayout mDialogOk = dialog.findViewById(R.id.frmOk);
+            mDialogOk.setOnClickListener(v -> {
+                sqlDB = myHelper.getWritableDatabase();
+                    sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
+                    sqlDB.execSQL("delete from alarmDetailTable where id = '"+ thisId +"'");
+                    sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
+                    sqlDB.close();
+                    cancelAlarm(thisId);
+                    showLists();
+                dialog.cancel();
+            });
+
+            dialog.show();
+        }
     }
 }
