@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         myHelper = new myDBHelper(this);
 
         showLists();
-
     }
 
     public static class myDBHelper extends SQLiteOpenHelper{
@@ -367,11 +366,11 @@ public class MainActivity extends AppCompatActivity {
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-            @SuppressLint("Recycle")
             Cursor alarmCursor = sqlDB.rawQuery("select * from alarmDetailTable where id = "+ thisId, null);
             alarmCursor.moveToNext();
             final String alarmDate = alarmCursor.getString(1);
             final int alarmBefore = alarmCursor.getInt(2);
+            alarmCursor.close();
 
             final Calendar calendar = new GregorianCalendar();
             Intent myIntent = new Intent(MainActivity.this, AlarmReceiver.class);
@@ -444,7 +443,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("id", thisId);
                 startActivity(intent);
             });
-
             shape.setColor(Color.argb(color_Alpha, colorForBackground[0], colorForBackground[1], colorForBackground[2]));
             shape.setCornerRadius(20);
             hLayout.setGravity(Gravity.LEFT);
@@ -474,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
     public class ViewDialog {
         int thisId, colorR, colorG, colorB;
         String scheduleName;
-        boolean isDelete = true;
+        boolean isDelete;
         String schCode;
         public ViewDialog(int thisId, String scheduleName, boolean isDelete, int cR, int cG, int cB) {
             this.thisId = thisId;
@@ -497,10 +495,10 @@ public class MainActivity extends AppCompatActivity {
         @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void showDialog(Activity activity) {
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
             if (isDelete) {
-                final Dialog dialog = new Dialog(activity);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setCancelable(false);
                 dialog.setContentView(R.layout.dialog);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 TextView itemName = dialog.findViewById(R.id.itemName);
@@ -523,11 +521,7 @@ public class MainActivity extends AppCompatActivity {
                     dialog.cancel();
                 });
 
-                dialog.show();
             }else{
-                final Dialog dialog = new Dialog(activity);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setCancelable(false);
                 dialog.setContentView(R.layout.meet_dialog);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 TextView itemName = dialog.findViewById(R.id.itemName);
@@ -550,8 +544,10 @@ public class MainActivity extends AppCompatActivity {
                     dialog.cancel();
                 });
 
-                dialog.show();
             }
+
+            dialog.show();
+
         }
     }
 }

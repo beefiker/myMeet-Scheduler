@@ -27,15 +27,27 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:text="@string/name" />
-            <EditText
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="14sp"
-                android:textColor="@color/darkyButNotDark"
+                app:hintTextColor="#EAECF3"
                 android:textColorHint="@color/grayButNotGray"
-                android:hint="@string/react_class"
-                android:id="@+id/editName" />
+                android:layout_weight="1"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enter_your_subject_name"
+                    android:textSize="14sp"
+                    android:textColor="@color/darkyButNotDark"
+                    android:textColorHint="@color/grayButNotGray"
+                    android:id="@+id/editName" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
         </LinearLayout>
 
@@ -54,16 +66,31 @@
                 android:textStyle="bold"
                 android:text="@string/code" />
 
-            <EditText
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/exampleCode"
-                android:maxLength="12"
-                android:textSize="14sp"
-                android:textColor="@color/darkyButNotDark"
+                android:hint="@string/enter_your_meet_code"
+                app:hintTextColor="#EAECF3"
                 android:textColorHint="@color/grayButNotGray"
-                android:id="@+id/editCode" />
+                android:layout_weight="1"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLength="12"
+                    android:textSize="14sp"
+                    android:textColor="@color/darkyButNotDark"
+                    android:textColorHint="@color/grayButNotGray"
+                    android:id="@+id/editCode" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
 
         </LinearLayout>
 
@@ -82,6 +109,15 @@
                 android:textStyle="bold"
                 android:text="@string/time" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:hintTextColor="#EAECF3"
+                android:textColorHint="@color/grayButNotGray"
+                app:errorEnabled="true">
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -91,7 +127,11 @@
                 android:textColorHint="@color/grayButNotGray"
                 android:focusable="false"
                 android:hint="@string/_06_00"
-                android:id="@+id/editTime" />
+                android:id="@+id/editTime"
+                android:autofillHints="@string/_06_00"
+                android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 

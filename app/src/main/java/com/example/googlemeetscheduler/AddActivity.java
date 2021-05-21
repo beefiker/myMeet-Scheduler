@@ -32,6 +32,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -64,10 +66,11 @@ public class AddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subactivity_main);
 
-        Spinner spin = (Spinner) findViewById(R.id.daySpin);
+
+        Spinner spin = findViewById(R.id.daySpin);
         spin.setOnItemSelectedListener(new DaysSpinnerClass());
 
-        Spinner spin2 = (Spinner) findViewById(R.id.alarmSpin);
+        Spinner spin2 = findViewById(R.id.alarmSpin);
         spin2.setOnItemSelectedListener(new AlarmsSpinnerClass());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
@@ -137,33 +140,12 @@ public class AddActivity extends AppCompatActivity {
 
         addSchedule = findViewById(R.id.addSchedule);
         editName = findViewById(R.id.editName);
-        if(editName.length()==0)editName.setError("Field cannot be left blank.");
         editTime = findViewById(R.id.editTime);
         editCode = findViewById(R.id.editCode);
-        editCode.addTextChangedListener(new TextWatcher() {
-            int prevL = 0;
 
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                prevL = editCode.getText().toString().length();
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                int length = editable.length();
-                if ((prevL < length) && (length == 3 || length == 8)) {
-                    editable.append("-");
-                }
-                if(editName.length() == 0){
-                    editName.setError("Field cannot be left blank.");
-                }
-            }
-        });
+        TextInputLayout textInputLayout1 = findViewById(R.id.til1);
+        TextInputLayout textInputLayout2 = findViewById(R.id.til2);
+        TextInputLayout textInputLayout3 = findViewById(R.id.til3);
 
         myHelper = new myDBHelper(this);
 
@@ -250,9 +232,14 @@ public class AddActivity extends AppCompatActivity {
                     sqlDB.close();
                     openMain();
 
+                }else if(editName.getText().toString().equals("") && editTime.getText().toString().equals("")){
+                    textInputLayout1.setError("Enter The Subject Name");
+                    textInputLayout3.setError("Set Time for Alarm");
                 }else if(editName.getText().toString().equals("") && editName.getText().toString().length() < 1){
+                    textInputLayout1.setError("Enter The Subject Name");
                     Toast.makeText(AddActivity.this, "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
                 }else if(editTime.getText().toString().equals("") && editTime.getText().toString().length() < 1){
+                    textInputLayout3.setError("Set Time for Alarm");
                     Toast.makeText(AddActivity.this, "시간을 설정해주세요", Toast.LENGTH_SHORT).show();
                 }
             }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:background="#f1f3f5"
     android:layout_height="match_parent">
 
@@ -81,7 +82,9 @@
                 android:elevation="2dp"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
-                android:hint="@string/name" />
+                android:hint="@string/name"
+                android:autofillHints="@string/name"
+                android:inputType="text" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,7 +116,9 @@
                 android:elevation="2dp"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
-                android:hint="@string/exampleCode" />
+                android:hint="@string/exampleCode"
+                android:autofillHints="@string/exampleCode"
+                android:inputType="text" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -146,7 +151,9 @@
                 android:focusable="false"
                 android:textColorHint="@color/grayButNotGray"
                 android:textColor="@color/darkyButNotDark"
-                android:hint="@string/_06_00" />
+                android:hint="@string/_06_00"
+                android:autofillHints="@string/_06_00"
+                android:inputType="text" />
         </LinearLayout>
 
 
@@ -256,7 +263,9 @@
                 android:paddingStart="10dp"
                 android:layout_marginStart="1dp"
                 android:elevation="2dp"
-                tools:ignore="RtlSymmetry" />
+                tools:ignore="RtlSymmetry"
+                android:autofillHints="@string/content"
+                android:inputType="text" />
 
             <ImageButton
                 android:id="@+id/addReview"
