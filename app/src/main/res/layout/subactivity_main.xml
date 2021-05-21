@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#f1f3f5"
     android:orientation="vertical">
 
@@ -35,6 +36,7 @@
                 android:textColorHint="@color/grayButNotGray"
                 android:hint="@string/react_class"
                 android:id="@+id/editName" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -57,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="@string/exampleCode"
+                android:maxLength="12"
                 android:textSize="14sp"
                 android:textColor="@color/darkyButNotDark"
                 android:textColorHint="@color/grayButNotGray"

@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -21,6 +22,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -53,6 +55,13 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
+    final static int SUNDAY = 1;
+    final static int MONDAY = 2;
+    final static int TUESDAY = 3;
+    final static int WEDNESDAY = 4;
+    final static int THURSDAY = 5;
+    final static int FRIDAY = 6;
+    final static int SATURDAY = 7;
     int count = 0;
 
     ArrayList<ImageButton> arrDeletes = new ArrayList<>();
@@ -277,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
             int[] colorForText = new int[3];
 
             switch(day){
-                case 2:
+                case MONDAY:
                     colorForBackground[0] = 255;
                     colorForBackground[1] = 214;
                     colorForBackground[2] = 168;
@@ -288,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255, 239, 71, 111));
                     schName.setTextColor(Color.argb(255, 239, 71, 111));
                     break;
-                case 3:
+                case TUESDAY:
                     colorForBackground[0] = 253;
                     colorForBackground[1] = 255;
                     colorForBackground[2] = 182;
@@ -299,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255, 244, 162, 97));
                     schName.setTextColor(Color.argb(205, 244, 162, 97));
                     break;
-                case 4:
+                case WEDNESDAY:
                     colorForBackground[0] = 202;
                     colorForBackground[1] = 255;
                     colorForBackground[2] = 191;
@@ -310,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255, 6, 214, 160));
                     schName.setTextColor(Color.argb(255, 6, 214, 160));
                     break;
-                case 5:
+                case THURSDAY:
                     colorForBackground[0] = 155;
                     colorForBackground[1] = 246;
                     colorForBackground[2] = 255;
@@ -321,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255, 17,138,178));
                     schName.setTextColor(Color.argb(255, 17,138,178));
                     break;
-                case 6:
+                case FRIDAY:
                     colorForBackground[0] = 160;
                     colorForBackground[1] = 196;
                     colorForBackground[2] = 255;
@@ -332,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                     schDay.setTextColor(Color.argb(255,  7,59,78));
                     schName.setTextColor(Color.argb(255,  7,59,78));
                     break;
-                case 7:
+                case SATURDAY:
                     colorForBackground[0] = 255;
                     colorForBackground[1] = 198;
                     colorForBackground[2] = 255;
@@ -382,18 +391,14 @@ public class MainActivity extends AppCompatActivity {
 
             if(scheduleActivation.equals("true")){
                 myIntent.putExtra("state", "on");
-                myIntent.putExtra("scheduleId", thisId);
-                myIntent.putExtra("scheduleName", scheduleName);
-                myIntent.putExtra("scheduleCode", scheduleCode);
-                myIntent.putExtra("alarmDate", alarmDate);
             }else{
                 myIntent.putExtra("state", "off");
-                myIntent.putExtra("scheduleId", thisId);
-                myIntent.putExtra("scheduleName", scheduleName);
-                myIntent.putExtra("scheduleCode", scheduleCode);
-                myIntent.putExtra("alarmDate", alarmDate);
             }
 
+            myIntent.putExtra("scheduleId", thisId);
+            myIntent.putExtra("scheduleName", scheduleName);
+            myIntent.putExtra("scheduleCode", scheduleCode);
+            myIntent.putExtra("alarmDate", alarmDate);
             PendingIntent appIntent = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             long calMillis = calendar.getTimeInMillis();
@@ -401,37 +406,29 @@ public class MainActivity extends AppCompatActivity {
             if(calMillis > currMillis){
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
             }else{
-
                 myIntent.putExtra("state", "off");
-                myIntent.putExtra("scheduleId", thisId);
-                myIntent.putExtra("scheduleName", scheduleName);
-                myIntent.putExtra("scheduleCode", scheduleCode);
-                myIntent.putExtra("alarmDate", alarmDate);
-                PendingIntent appIntent1 = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent1);
+                PendingIntent updateIntent = PendingIntent.getBroadcast(MainActivity.this, thisId, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), updateIntent);
             }
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
+
             aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 sqlDB = myHelper.getWritableDatabase();
                     if(isChecked){
                         sqlDB.execSQL("update scheduleTable set activation = '"+true+"' where id = '"+ thisId +"'");
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
                     }else{
-//                        cancelAlarm(thisId);
                         sqlDB.execSQL("update scheduleTable set activation = '"+false+"' where id = '"+ thisId +"'");
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
                     }
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), appIntent);
                 sqlDB.close();
             });
 
             final String scCode = scheduleCode;
             arrCodes.get(count).setOnClickListener(view -> {
-                Uri parse = Uri.parse("https://meet.google.com/"+scCode);
-                Intent intent = new Intent(Intent.ACTION_VIEW, parse);
-                startActivity(intent);
+                ViewDialog alert = new ViewDialog(thisId, scheduleName, false, colorForText[0], colorForText[1], colorForText[2], scCode);
+                alert.showDialog(MainActivity.this);
             });
             arrDeletes.get(count).setOnClickListener(view -> {
-                ViewDialog alert = new ViewDialog(thisId, scheduleName, colorForText[0], colorForText[1], colorForText[2]);
+                ViewDialog alert = new ViewDialog(thisId, scheduleName, true, colorForText[0], colorForText[1], colorForText[2]);
                 alert.showDialog(MainActivity.this);
             });
 
@@ -475,46 +472,86 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class ViewDialog {
-
         int thisId, colorR, colorG, colorB;
         String scheduleName;
-        public ViewDialog(int thisId, String scheduleName, int cR, int cG, int cB) {
+        boolean isDelete = true;
+        String schCode;
+        public ViewDialog(int thisId, String scheduleName, boolean isDelete, int cR, int cG, int cB) {
             this.thisId = thisId;
             this.scheduleName = scheduleName;
+            this.isDelete = isDelete;
             this.colorR = cR;
             this.colorG = cG;
             this.colorB = cB;
+        }
+        public ViewDialog(int thisId, String scheduleName, boolean isDelete, int cR, int cG, int cB, String schCode) {
+            this.thisId = thisId;
+            this.scheduleName = scheduleName;
+            this.isDelete = isDelete;
+            this.colorR = cR;
+            this.colorG = cG;
+            this.colorB = cB;
+            this.schCode = schCode;
         }
 
         @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void showDialog(Activity activity) {
-            final Dialog dialog = new Dialog(activity);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCancelable(false);
-            dialog.setContentView(R.layout.dialog);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            TextView itemName = dialog.findViewById(R.id.itemName);
-            itemName.setText("\" "+scheduleName+" \"");
-            itemName.setTextColor(Color.argb(255, colorR, colorG, colorB));
-            CardView cv = dialog.findViewById(R.id.cardV);
-            cv.setBackground(getDrawable(R.drawable.rounded_box));
-            FrameLayout mDialogNo = dialog.findViewById(R.id.frmNo);
-            mDialogNo.setOnClickListener(v -> dialog.dismiss());
+            if (isDelete) {
+                final Dialog dialog = new Dialog(activity);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setCancelable(false);
+                dialog.setContentView(R.layout.dialog);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                TextView itemName = dialog.findViewById(R.id.itemName);
+                itemName.setText("\" " + scheduleName + " \"");
+                itemName.setTextColor(Color.argb(255, colorR, colorG, colorB));
+                CardView cv = dialog.findViewById(R.id.cardV);
+                cv.setBackground(getDrawable(R.drawable.rounded_box));
+                FrameLayout mDialogNo = dialog.findViewById(R.id.frmNo);
+                mDialogNo.setOnClickListener(v -> dialog.dismiss());
 
-            FrameLayout mDialogOk = dialog.findViewById(R.id.frmOk);
-            mDialogOk.setOnClickListener(v -> {
-                sqlDB = myHelper.getWritableDatabase();
-                    sqlDB.execSQL("delete from scheduleTable where id = '"+ thisId +"'");
-                    sqlDB.execSQL("delete from alarmDetailTable where id = '"+ thisId +"'");
-                    sqlDB.execSQL("delete from memoTable where num = '"+ thisId +"'");
+                FrameLayout mDialogOk = dialog.findViewById(R.id.frmOk);
+                mDialogOk.setOnClickListener(v -> {
+                    sqlDB = myHelper.getWritableDatabase();
+                    sqlDB.execSQL("delete from scheduleTable where id = '" + thisId + "'");
+                    sqlDB.execSQL("delete from alarmDetailTable where id = '" + thisId + "'");
+                    sqlDB.execSQL("delete from memoTable where num = '" + thisId + "'");
                     sqlDB.close();
                     cancelAlarm(thisId);
                     showLists();
-                dialog.cancel();
-            });
+                    dialog.cancel();
+                });
 
-            dialog.show();
+                dialog.show();
+            }else{
+                final Dialog dialog = new Dialog(activity);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setCancelable(false);
+                dialog.setContentView(R.layout.meet_dialog);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                TextView itemName = dialog.findViewById(R.id.itemName);
+                TextView itemLink = dialog.findViewById(R.id.itemLink);
+                itemName.setText("- "+scheduleName+" -");
+                itemLink.setText(schCode);
+                int myColor = ContextCompat.getColor(getApplicationContext(), R.color.blueblue);
+                itemName.setTextColor(Color.argb(255, colorR, colorG, colorB));
+                itemLink.setTextColor(myColor);
+                CardView cv = dialog.findViewById(R.id.cardV);
+                cv.setBackground(getDrawable(R.drawable.rounded_box));
+                FrameLayout mDialogNo = dialog.findViewById(R.id.frmNo);
+                mDialogNo.setOnClickListener(v -> dialog.dismiss());
+
+                FrameLayout mDialogOk = dialog.findViewById(R.id.frmOk);
+                mDialogOk.setOnClickListener(v -> {
+                    Uri parse = Uri.parse("https://meet.google.com/"+schCode);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, parse);
+                    startActivity(intent);
+                    dialog.cancel();
+                });
+
+                dialog.show();
+            }
         }
     }
 }

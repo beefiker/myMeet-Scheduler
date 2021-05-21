@@ -12,6 +12,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -133,8 +137,33 @@ public class AddActivity extends AppCompatActivity {
 
         addSchedule = findViewById(R.id.addSchedule);
         editName = findViewById(R.id.editName);
+        if(editName.length()==0)editName.setError("Field cannot be left blank.");
         editTime = findViewById(R.id.editTime);
         editCode = findViewById(R.id.editCode);
+        editCode.addTextChangedListener(new TextWatcher() {
+            int prevL = 0;
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                prevL = editCode.getText().toString().length();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                int length = editable.length();
+                if ((prevL < length) && (length == 3 || length == 8)) {
+                    editable.append("-");
+                }
+                if(editName.length() == 0){
+                    editName.setError("Field cannot be left blank.");
+                }
+            }
+        });
 
         myHelper = new myDBHelper(this);
 

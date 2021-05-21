@@ -20,4 +20,5 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="this_item_will_be_deleted_immediately_you_can_t_undo_this_action">This item will be deleted immediately. You can\'t undo this action.</string>
+    <string name="meet_google_com">meet.google.com/</string>
 </resources>

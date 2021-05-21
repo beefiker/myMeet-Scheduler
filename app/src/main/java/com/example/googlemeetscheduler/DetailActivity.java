@@ -15,6 +15,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +45,19 @@ import java.util.Objects;
 
 public class DetailActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
 {
+    final static int SUNDAY = 1;
+    final static int MONDAY = 2;
+    final static int TUESDAY = 3;
+    final static int WEDNESDAY = 4;
+    final static int THURSDAY = 5;
+    final static int FRIDAY = 6;
+    final static int SATURDAY = 7;
+    final static int Before0 = 0;
+    final static int Before5 = 5;
+    final static int Before10 = 10;
+    final static int Before15 = 15;
+    final static int Before30 = 30;
+    final static int Before60 = 60;
 
     static int STATIC_ID = 0;
     EditText editName, editCode, editTime, editContent;
@@ -246,7 +261,27 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
 
         editName.setText(name);
         editCode.setText(code);
+        editCode.addTextChangedListener(new TextWatcher() {
+            int prevL = 0;
 
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                prevL = editCode.getText().toString().length();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                int length = editable.length();
+                if ((prevL < length) && (length == 3 || length == 8)) {
+                    editable.append("-");
+                }
+            }
+        });
         String time1 = time.substring(0,2);
         String time2 = time.substring(2);
         editTime.setText(time1 + time2);
@@ -300,25 +335,25 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             int updateDay = spin1.getSelectedItemPosition();
             switch(updateDay){
                 case 6:
-                    updateDay = 1;
+                    updateDay = SUNDAY;
                     break;
                 case 0:
-                    updateDay = 2;
+                    updateDay = MONDAY;
                     break;
                 case 1:
-                    updateDay = 3;
+                    updateDay = TUESDAY;
                     break;
                 case 2:
-                    updateDay = 4;
+                    updateDay = WEDNESDAY;
                     break;
                 case 3:
-                    updateDay = 5;
+                    updateDay = THURSDAY;
                     break;
                 case 4:
-                    updateDay = 6;
+                    updateDay = FRIDAY;
                     break;
                 default:
-                    updateDay = 7;
+                    updateDay = SATURDAY;
                     break;
             }
             String[] hourMin = editTime.getText().toString().split(":");
@@ -353,22 +388,22 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             int updateBefore = spin2.getSelectedItemPosition();
             switch(updateBefore){
                 case 0:
-                    updateBefore = 0;
+                    updateBefore = Before0;
                     break;
                 case 1:
-                    updateBefore = 5;
+                    updateBefore = Before5;
                     break;
                 case 2:
-                    updateBefore = 10;
+                    updateBefore = Before10;
                     break;
                 case 3:
-                    updateBefore = 15;
+                    updateBefore = Before15;
                     break;
                 case 4:
-                    updateBefore = 30;
+                    updateBefore = Before30;
                     break;
                 default:
-                    updateBefore = 60;
+                    updateBefore = Before60;
                     break;
             }
             sqlDB.execSQL("update alarmDetailTable set date = '"+updateDate+"', alarmbefore = '"+updateBefore+"'  where id = '"+ STATIC_ID +"' ");
