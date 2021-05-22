@@ -67,20 +67,20 @@ public class AddActivity extends AppCompatActivity {
         setContentView(R.layout.subactivity_main);
 
 
-        Spinner spin = findViewById(R.id.daySpin);
-        spin.setOnItemSelectedListener(new DaysSpinnerClass());
+        Spinner daySpinner = findViewById(R.id.daySpin);
+        daySpinner.setOnItemSelectedListener(new DaysSpinnerClass());
 
-        Spinner spin2 = findViewById(R.id.alarmSpin);
-        spin2.setOnItemSelectedListener(new AlarmsSpinnerClass());
+        Spinner alarmSpinner = findViewById(R.id.alarmSpin);
+        alarmSpinner.setOnItemSelectedListener(new AlarmsSpinnerClass());
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
-        spin.setAdapter(adapter);
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, alarms);
-        spin2.setAdapter(adapter2);
-        spin.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
-        spin2.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
-        Calendar cale = Calendar.getInstance();
-        int nowDay = cale.get(Calendar.DAY_OF_WEEK);
+        ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
+        daySpinner.setAdapter(dayAdapter);
+        ArrayAdapter<String> alarmAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, alarms);
+        alarmSpinner.setAdapter(alarmAdapter);
+        daySpinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
+        alarmSpinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
+        Calendar calNow = Calendar.getInstance();
+        int nowDay = calNow.get(Calendar.DAY_OF_WEEK);
         switch (nowDay){
             case 1:
                 nowDay = 6;
@@ -104,16 +104,16 @@ public class AddActivity extends AppCompatActivity {
                 nowDay = 5;
                 break;
         }
-        spin.setSelection(nowDay);
-        Drawable spinnerDrawable = spin.getBackground().getConstantState().newDrawable();
-        Drawable spinnerDrawable1 = spin2.getBackground().getConstantState().newDrawable();
+        daySpinner.setSelection(nowDay);
+        Drawable daySpinnerDrawable = daySpinner.getBackground().getConstantState().newDrawable();
+        Drawable alarmSpinnerDrawable = alarmSpinner.getBackground().getConstantState().newDrawable();
 
-        spinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
-        spinnerDrawable1.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
+        daySpinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
+        alarmSpinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            spin.setBackground(spinnerDrawable);
-            spin2.setBackground(spinnerDrawable1);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            daySpinner.setBackground(daySpinnerDrawable);
+            alarmSpinner.setBackground(alarmSpinnerDrawable);
         }
         for (int i = 0; i < sCoreDreams.length-1; i++){
             sCoreDreams[i] =  Typeface.createFromAsset(getAssets(), "SCDream"+(i+1)+".otf");
@@ -146,6 +146,27 @@ public class AddActivity extends AppCompatActivity {
         TextInputLayout textInputLayout1 = findViewById(R.id.til1);
         TextInputLayout textInputLayout2 = findViewById(R.id.til2);
         TextInputLayout textInputLayout3 = findViewById(R.id.til3);
+
+        editCode.addTextChangedListener(new TextWatcher() {
+            int prevL = 0;
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                prevL = editCode.getText().toString().length();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                int length = editable.length();
+                if ((prevL < length) && (length == 3 || length == 8)) {
+                    editable.append("-");
+                }
+            }
+        });
+
 
         myHelper = new myDBHelper(this);
 
@@ -224,6 +245,11 @@ public class AddActivity extends AppCompatActivity {
                     if(sDayOfMonth.length() < 2) sDayOfMonth = "0"+sDayOfMonth;
                     String newForm = nowYear +"-"+ sMonth +"-"+ sDayOfMonth +" ";
                     newForm += hourMin[0]+":"+hourMin[1]+":00";
+
+                    if(editCode.getText().toString().length() < 12){
+                        editCode.setText(null);
+                        Toast.makeText(AddActivity.this, "Invalid Meet Code", Toast.LENGTH_SHORT).show();
+                    }
 
                     sqlDB = myHelper.getWritableDatabase();
                     String tmp = hourMin[0] + ":"+ hourMin[1];

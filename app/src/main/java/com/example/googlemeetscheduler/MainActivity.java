@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             paramsRIGHT.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             paramsRIGHT.addRule(RelativeLayout.CENTER_VERTICAL);
 
-            schName.setTextSize(16);
+            schName.setTextSize(17);
             schName.setTypeface(sCoreDreams[5]);
 
             schTime.setId(thisId+100000);
@@ -240,8 +240,8 @@ public class MainActivity extends AppCompatActivity {
             schDay.setTypeface(sCoreDreams[5]);
 
             arrCodes.get(count).setLayoutParams(params);
-            arrCodes.get(count).setTextSize(12);
-            arrCodes.get(count).setTextColor(Color.rgb(33,37,41));
+            arrCodes.get(count).setTextSize(11);
+            arrCodes.get(count).setTextColor(Color.rgb(134, 142, 150));
             arrCodes.get(count).setTypeface(sCoreDreams[3]);
 
             schTime.setTextSize(28);

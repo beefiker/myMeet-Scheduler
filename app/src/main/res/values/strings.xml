@@ -3,7 +3,7 @@
     <string name="memo">MEMO</string>
     <string name="name">Subject</string>
     <string name="alarm">Alarm</string>
-    <string name="code">MeetCode</string>
+    <string name="code">Code</string>
     <string name="time">When</string>
     <string name="day_of_week">Day of week</string>
     <string name="update">UPDATE</string>

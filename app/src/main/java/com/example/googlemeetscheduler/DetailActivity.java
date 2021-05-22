@@ -111,23 +111,23 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
 
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-        Spinner spin1 = findViewById(R.id.daySpin);
-        Spinner spin2 = findViewById(R.id.alarmSpin);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, alarms);
-        spin1.setAdapter(adapter);
-        spin2.setAdapter(adapter2);
-        spin1.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
-        spin1.setOnItemSelectedListener(new DaysSpinnerClass());
-        spin2.setOnItemSelectedListener(null);
-        Drawable spinnerDrawable = spin1.getBackground().getConstantState().newDrawable();
-        spinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
-        Drawable spinnerDrawable1 = spin1.getBackground().getConstantState().newDrawable();
-        spinnerDrawable1.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
+        Spinner daySpinner = findViewById(R.id.daySpin);
+        Spinner alarmSpinner = findViewById(R.id.alarmSpin);
+        ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, days);
+        ArrayAdapter<String> alarmAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.textview, alarms);
+        daySpinner.setAdapter(dayAdapter);
+        alarmSpinner.setAdapter(alarmAdapter);
+        daySpinner.getBackground().setColorFilter(getResources().getColor(R.color.grayButNotGray), PorterDuff.Mode.SRC_ATOP);
+        daySpinner.setOnItemSelectedListener(new DaysSpinnerClass());
+        alarmSpinner.setOnItemSelectedListener(null);
+        Drawable daySpinnerDrawable = daySpinner.getBackground().getConstantState().newDrawable();
+        daySpinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
+        Drawable alarmSpinnerDrawable = daySpinner.getBackground().getConstantState().newDrawable();
+        alarmSpinnerDrawable.setColorFilter(getResources().getColor(R.color.darkyButNotDark), PorterDuff.Mode.SRC_ATOP);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            spin1.setBackground(spinnerDrawable);
-            spin2.setBackground(spinnerDrawable1);
+            daySpinner.setBackground(daySpinnerDrawable);
+            alarmSpinner.setBackground(alarmSpinnerDrawable);
         }
 
         layoutContainer = findViewById(R.id.layoutContainer);
@@ -201,7 +201,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
                 alarmBefore = 5;
                 break;
         }
-        spin2.setSelection(alarmBefore);
+        alarmSpinner.setSelection(alarmBefore);
 
         alarmDate = alarmDate.replaceAll("[^0-9]","");
         System.out.println("alarm : " + alarmDate);
@@ -237,7 +237,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
                 day = 5;
                 break;
         }
-        spin1.setSelection(day);
+        daySpinner.setSelection(day);
 
         layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
         textview.setLayoutParams(layoutParams);
@@ -270,9 +270,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -332,7 +330,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             String updateName = editName.getText().toString();
             String updateCode = editCode.getText().toString();
             boolean updateAct = !editActivation.getText().toString().equals("false");
-            int updateDay = spin1.getSelectedItemPosition();
+            int updateDay = daySpinner.getSelectedItemPosition();
             switch(updateDay){
                 case 6:
                     updateDay = SUNDAY;
@@ -360,6 +358,12 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             if(hourMin[0].length() < 2) hourMin[0] = "0"+hourMin[0];
             if(hourMin[1].length() < 2) hourMin[1] = "0"+hourMin[1];
             String tmp = hourMin[0] + ":"+ hourMin[1];
+
+            if(updateCode.length() < 12){
+                editCode.setText(null);
+                Toast.makeText(DetailActivity.this, "Invalid Meet Code", Toast.LENGTH_SHORT).show();
+            }
+
             sqlDB = myHelper.getWritableDatabase();
             sqlDB.execSQL("update scheduleTable set day = '"+updateDay+"', course = '"+updateName+"', code = '"+updateCode+"', alarmTime = '"+tmp+"', activation = '"+updateAct+"'  where id = '"+ thisId +"' ");
 
@@ -385,7 +389,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             String newDate = String.valueOf(date);
             if(newDate.length() < 2) newDate = "0"+newDate;
             String updateDate = year +"-"+newMon+"-"+newDate+" "+tmp+":00";
-            int updateBefore = spin2.getSelectedItemPosition();
+            int updateBefore = alarmSpinner.getSelectedItemPosition();
             switch(updateBefore){
                 case 0:
                     updateBefore = Before0;
