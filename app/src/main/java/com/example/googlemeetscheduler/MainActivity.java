@@ -22,7 +22,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -75,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
     AlarmManager alarmManager;
     ActionBar.LayoutParams actionLayoutParams;
+
+    DayComponent cc = new DayComponent();
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
@@ -162,6 +163,10 @@ public class MainActivity extends AppCompatActivity {
         alarmManager.cancel(appIntent);
     }
 
+    public boolean isNull(String checkItem){
+        return checkItem.length() < 1;
+    }
+
     @SuppressLint({"RtlHardcoded", "SetTextI18n"})
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void showLists(){
@@ -217,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             RelativeLayout.LayoutParams paramsCENTER = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             paramsCENTER.setMargins(50, 10, 0, 0);
 
-            if(scheduleCode.length() < 1){
+            if(isNull(scheduleCode)){
                 paramsCENTER.addRule(RelativeLayout.RIGHT_OF, schTime.getId());
                 paramsCENTER.addRule(RelativeLayout.CENTER_VERTICAL, schTime.getId());
                 schName.setTextSize(17);
@@ -280,87 +285,57 @@ public class MainActivity extends AppCompatActivity {
 
             GradientDrawable shape = new GradientDrawable();
 
-            int color_Alpha = 110;
-            int[] colorForBackground = new int[3];
-            int[] colorForText = new int[3];
-
             switch(day){
                 case MONDAY:
-                    colorForBackground[0] = 255;
-                    colorForBackground[1] = 214;
-                    colorForBackground[2] = 168;
-                    colorForText[0] = 239;
-                    colorForText[1] = 71;
-                    colorForText[2] = 111;
-                    schDay.setText("MON");
-                    schDay.setTextColor(Color.argb(255, 239, 71, 111));
-                    schName.setTextColor(Color.argb(255, 239, 71, 111));
+                    cc.setTextColors(255,239, 71, 111);
+                    cc.setBackgroundColors(255,255, 214, 168);
+                    cc.setDay("MON");
+                    schDay.setText(cc.getDay());
+                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+
                     break;
                 case TUESDAY:
-                    colorForBackground[0] = 253;
-                    colorForBackground[1] = 255;
-                    colorForBackground[2] = 182;
-                    colorForText[0] = 244;
-                    colorForText[1] = 162;
-                    colorForText[2] = 97;
-                    schDay.setText("TUE");
-                    schDay.setTextColor(Color.argb(255, 244, 162, 97));
-                    schName.setTextColor(Color.argb(205, 244, 162, 97));
+                    cc.setTextColors(255,244, 162, 97);
+                    cc.setBackgroundColors(255,253, 255, 182);
+                    schDay.setText(cc.getDay());
+                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
                     break;
                 case WEDNESDAY:
-                    colorForBackground[0] = 202;
-                    colorForBackground[1] = 255;
-                    colorForBackground[2] = 191;
-                    colorForText[0] = 6;
-                    colorForText[1] = 214;
-                    colorForText[2] = 160;
-                    schDay.setText("WED");
-                    schDay.setTextColor(Color.argb(255, 6, 214, 160));
-                    schName.setTextColor(Color.argb(255, 6, 214, 160));
+                    cc.setTextColors(255,6, 214, 160);
+                    cc.setBackgroundColors(255,202, 255, 191);
+                    schDay.setText(cc.getDay());
+                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
                     break;
                 case THURSDAY:
-                    colorForBackground[0] = 155;
-                    colorForBackground[1] = 246;
-                    colorForBackground[2] = 255;
-                    colorForText[0] = 17;
-                    colorForText[1] = 138;
-                    colorForText[2] = 178;
-                    schDay.setText("THU");
-                    schDay.setTextColor(Color.argb(255, 17,138,178));
-                    schName.setTextColor(Color.argb(255, 17,138,178));
+                    cc.setTextColors(255,17, 138, 178);
+                    cc.setBackgroundColors(255,155, 246, 255);
+                    schDay.setText(cc.getDay());
+                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
                     break;
                 case FRIDAY:
-                    colorForBackground[0] = 160;
-                    colorForBackground[1] = 196;
-                    colorForBackground[2] = 255;
-                    colorForText[0] = 7;
-                    colorForText[1] = 59;
-                    colorForText[2] = 78;
-                    schDay.setText("FRI");
-                    schDay.setTextColor(Color.argb(255,  7,59,78));
-                    schName.setTextColor(Color.argb(255,  7,59,78));
+                    cc.setTextColors(255,7, 59, 78);
+                    cc.setBackgroundColors(255,160, 196, 255);
+                    schDay.setText(cc.getDay());
+                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
                     break;
                 case SATURDAY:
-                    colorForBackground[0] = 255;
-                    colorForBackground[1] = 198;
-                    colorForBackground[2] = 255;
-                    colorForText[0] = 181;
-                    colorForText[1] = 23;
-                    colorForText[2] = 158;
-                    schDay.setText("SAT");
-                    schDay.setTextColor(Color.argb(255, 181, 23, 158));
-                    schName.setTextColor(Color.argb(255, 181, 23, 158));
+                    cc.setTextColors(255,181, 23, 158);
+                    cc.setBackgroundColors(255,255, 198, 255);
+                    schDay.setText(cc.getDay());
+                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
                     break;
                 default:
-                    colorForBackground[0] = 255;
-                    colorForBackground[1] = 173;
-                    colorForBackground[2] = 173;
-                    colorForText[0] = 231;
-                    colorForText[1] = 57;
-                    colorForText[2] = 70;
-                    schDay.setText("SUN");
-                    schDay.setTextColor(Color.argb(255, 231,57,70));
-                    schName.setTextColor(Color.argb(255, 231,57,70));
+                    cc.setTextColors(255,231, 57, 70);
+                    cc.setBackgroundColors(255,255, 173, 173);
+                    schDay.setText(cc.getDay());
+                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
                     break;
             }
 
@@ -423,27 +398,27 @@ public class MainActivity extends AppCompatActivity {
 
             final String scCode = scheduleCode;
             arrCodes.get(count).setOnClickListener(view -> {
-                ViewDialog alert = new ViewDialog(thisId, scheduleName, false, colorForText[0], colorForText[1], colorForText[2], scCode);
+                ViewDialog alert = new ViewDialog(thisId, scheduleName, false, cc.getTextR(), cc.getTextG(), cc.getTextB(), scCode);
                 alert.showDialog(MainActivity.this);
             });
             arrDeletes.get(count).setOnClickListener(view -> {
-                ViewDialog alert = new ViewDialog(thisId, scheduleName, true, colorForText[0], colorForText[1], colorForText[2]);
+                ViewDialog alert = new ViewDialog(thisId, scheduleName, true, cc.getTextR(), cc.getTextG(), cc.getTextB());
                 alert.showDialog(MainActivity.this);
             });
 
-            int finalColor_R = colorForBackground[0];
-            int finalColor_G = colorForBackground[1];
-            int finalColor_B = colorForBackground[2];
+            int finalColor_R = cc.getBgR();
+            int finalColor_G = cc.getBgG();
+            int finalColor_B = cc.getBgB();
             hLayout.setOnClickListener(view -> {
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
-                intent.putExtra("color_Alpha", color_Alpha);
+                intent.putExtra("color_Alpha", 110);
                 intent.putExtra("color_R", finalColor_R);
                 intent.putExtra("color_G", finalColor_G);
                 intent.putExtra("color_B", finalColor_B);
                 intent.putExtra("id", thisId);
                 startActivity(intent);
             });
-            shape.setColor(Color.argb(color_Alpha, colorForBackground[0], colorForBackground[1], colorForBackground[2]));
+            shape.setColor(Color.argb(110, cc.getBgR(),  cc.getBgG(),  cc.getBgB()));
             shape.setCornerRadius(20);
             hLayout.setGravity(Gravity.LEFT);
             hLayout.setBackground(shape);
