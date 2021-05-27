@@ -254,7 +254,6 @@ public class AddActivity extends AppCompatActivity {
 
                     if(editCode.getText().toString().length() < 12){
                         editCode.setText(null);
-                        Toast.makeText(AddActivity.this, "Invalid Meet Code", Toast.LENGTH_SHORT).show();
                     }
 
                     sqlDB = myHelper.getWritableDatabase();

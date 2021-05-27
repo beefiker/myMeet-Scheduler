@@ -24,4 +24,7 @@
     <string name="enter_your_subject_name">Enter your subject name</string>
     <string name="enter_your_meet_code">Enter your meet code</string>
     <string name="x">X</string>
+    <string name="admob_app_id">ca-app-pub-5834098579993647~4105765690</string>
+    <string name="banner_ad_unit_id">ca-app-pub-5834098579993647/7087152251</string>
+    <string name="banner_ad_unit_id_for_test">ca-app-pub-3940256099942544/6300978111</string>
 </resources>

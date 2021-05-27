@@ -43,6 +43,12 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,12 +82,23 @@ public class MainActivity extends AppCompatActivity {
 
     DayComponent cc = new DayComponent();
 
+    private AdView mAdView;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MobileAds.initialize(this, initializationStatus -> {
+        });
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
         ActionBar actionbar = getSupportActionBar();
         TextView textview = new TextView(getApplicationContext());
         ActionBar.LayoutParams actionLayoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
@@ -90,14 +107,11 @@ public class MainActivity extends AppCompatActivity {
         textview.setTextColor(R.color.darkyButNotDark);
         textview.setTypeface(sCoreDreams[2], Typeface.BOLD);
         textview.setTextSize(19);
-        assert actionbar != null;
         actionbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionbar.setCustomView(textview);
 
-        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(0xfff8f9fa));
-
         Toolbar actionBarToolbar = findViewById(R.id.action_bar);
-        if (actionBarToolbar != null) actionBarToolbar.setTitleTextColor(Color.rgb(33,33,33));
+        actionBarToolbar.setTitleTextColor(Color.rgb(33,33,33));
 
         for (int i = 0; i < sCoreDreams.length-1; i++){
             sCoreDreams[i] =  Typeface.createFromAsset(getAssets(), "SCDream"+(i+1)+".otf");
@@ -137,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu_option, menu);
         int positionOfMenuItem = 0;
         MenuItem item = menu.getItem(positionOfMenuItem);
+
         SpannableString s = new SpannableString("+");
         s.setSpan(new AbsoluteSizeSpan(90), 0, s.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         s.setSpan(new ForegroundColorSpan(Color.rgb(26,144,236)), 0, s.length(), 0);

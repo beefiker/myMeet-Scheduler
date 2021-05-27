@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class DetailActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
 {
@@ -270,7 +271,14 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                boolean checkCharSeq = isEnglishOrNumber(charSequence.toString());
+                if(!checkCharSeq){
+                    editCode.setText(null);
+                    Toast.makeText(DetailActivity.this, "Incorrect Code Format", Toast.LENGTH_SHORT).show();
+                }
+
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -361,7 +369,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
 
             if(updateCode.length() < 12){
                 editCode.setText(null);
-                Toast.makeText(DetailActivity.this, "Invalid Meet Code", Toast.LENGTH_SHORT).show();
+                updateCode = "";
             }
 
             sqlDB = myHelper.getWritableDatabase();
@@ -439,6 +447,10 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
         showMemos();
     }
 
+
+    public boolean isEnglishOrNumber(String s){
+        return Pattern.matches("^[0-9a-zA-z-]*$", s);
+    }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint({"ResourceAsColor", "RtlHardcoded"})
     public void showMemos(){
