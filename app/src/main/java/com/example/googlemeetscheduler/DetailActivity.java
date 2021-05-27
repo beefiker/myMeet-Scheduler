@@ -482,7 +482,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             btnRemoveReview.setTextSize(17);
             btnRemoveReview.setTextColor(Color.rgb(255, 255, 255));
             btnRemoveReview.setTypeface(sCoreDreams[7]);
-            btnRemoveReview.setText("X");
+            btnRemoveReview.setText(R.string.x);
 
             tvContent.setLayoutParams(contentParams);
             tvContent.setTextSize(12);

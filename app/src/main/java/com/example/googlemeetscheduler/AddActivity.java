@@ -1,6 +1,7 @@
 package com.example.googlemeetscheduler;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +37,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class AddActivity extends AppCompatActivity {
     Button addSchedule;
@@ -156,7 +158,13 @@ public class AddActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                boolean checkCharSeq = isEnglishOrNumber(charSequence.toString());
+                if(!checkCharSeq){
+                    editCode.setText(null);
+                    Toast.makeText(AddActivity.this, "Incorrect Code Format", Toast.LENGTH_SHORT).show();
+                }
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -166,7 +174,6 @@ public class AddActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         myHelper = new myDBHelper(this);
 
@@ -183,7 +190,6 @@ public class AddActivity extends AppCompatActivity {
                             editTime.setText(hourSet + ":" + minSet);
                         }, hour, minute, true);
                 timePickerDialog.show();
-
         });
 
         final int idm = (int) System.currentTimeMillis();
@@ -275,6 +281,10 @@ public class AddActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public boolean isEnglishOrNumber(String s){
+        return Pattern.matches("^[0-9a-zA-z-]*$", s);
     }
 
     public class myDBHelper extends SQLiteOpenHelper {

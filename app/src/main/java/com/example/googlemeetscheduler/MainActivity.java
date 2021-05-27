@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     Typeface[] sCoreDreams = new Typeface[9];
 
     AlarmManager alarmManager;
-    ActionBar.LayoutParams actionLayoutParams;
 
     DayComponent cc = new DayComponent();
 
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ActionBar actionbar = getSupportActionBar();
         TextView textview = new TextView(getApplicationContext());
-        actionLayoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        ActionBar.LayoutParams actionLayoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
         textview.setLayoutParams(actionLayoutParams);
         textview.setText("GoogleMeetScheduler");
         textview.setTextColor(R.color.darkyButNotDark);
@@ -176,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         layoutContainer.removeAllViews();
         sqlDB = myHelper.getReadableDatabase();
         Cursor cursor = sqlDB.rawQuery("select * from scheduleTable order by day, alarmTime", null);
+//        Cursor cursor = sqlDB.rawQuery("select * from scheduleTable as st inner join alarmDetailTable as at on st.id = at.id order by date", null);
 
         while(cursor.moveToNext()){
 
@@ -288,56 +288,43 @@ public class MainActivity extends AppCompatActivity {
             switch(day){
                 case MONDAY:
                     cc.setTextColors(255,239, 71, 111);
-                    cc.setBackgroundColors(255,255, 214, 168);
+                    cc.setBackgroundColors(255, 255, 214, 168);
                     cc.setDay("MON");
-                    schDay.setText(cc.getDay());
-                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
-                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
-
                     break;
                 case TUESDAY:
                     cc.setTextColors(255,244, 162, 97);
-                    cc.setBackgroundColors(255,253, 255, 182);
-                    schDay.setText(cc.getDay());
-                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
-                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    cc.setBackgroundColors(255, 253, 255, 182);
+                    cc.setDay("TUE");
                     break;
                 case WEDNESDAY:
                     cc.setTextColors(255,6, 214, 160);
-                    cc.setBackgroundColors(255,202, 255, 191);
-                    schDay.setText(cc.getDay());
-                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
-                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    cc.setBackgroundColors(255, 202, 255, 191);
+                    cc.setDay("WED");
                     break;
                 case THURSDAY:
                     cc.setTextColors(255,17, 138, 178);
-                    cc.setBackgroundColors(255,155, 246, 255);
-                    schDay.setText(cc.getDay());
-                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
-                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    cc.setBackgroundColors(255, 155, 246, 255);
+                    cc.setDay("THU");
                     break;
                 case FRIDAY:
                     cc.setTextColors(255,7, 59, 78);
-                    cc.setBackgroundColors(255,160, 196, 255);
-                    schDay.setText(cc.getDay());
-                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
-                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    cc.setBackgroundColors(255, 160, 196, 255);
+                    cc.setDay("FRI");
                     break;
                 case SATURDAY:
                     cc.setTextColors(255,181, 23, 158);
-                    cc.setBackgroundColors(255,255, 198, 255);
-                    schDay.setText(cc.getDay());
-                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
-                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    cc.setBackgroundColors(255, 255, 198, 255);
+                    cc.setDay("SAT");
                     break;
                 default:
                     cc.setTextColors(255,231, 57, 70);
-                    cc.setBackgroundColors(255,255, 173, 173);
-                    schDay.setText(cc.getDay());
-                    schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
-                    schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+                    cc.setBackgroundColors(255, 255, 173, 173);
+                    cc.setDay("SUN");
                     break;
             }
+            schDay.setText(cc.getDay());
+            schDay.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
+            schName.setTextColor(Color.argb(cc.getAlpha(), cc.getTextR(), cc.getTextG(), cc.getTextB()));
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
@@ -397,13 +384,15 @@ public class MainActivity extends AppCompatActivity {
             });
 
             final String scCode = scheduleCode;
+            final int[] rgbCodes = {cc.getTextR(), cc.getTextG(), cc.getBgB()};
             arrCodes.get(count).setOnClickListener(view -> {
-                ViewDialog alert = new ViewDialog(thisId, scheduleName, false, cc.getTextR(), cc.getTextG(), cc.getTextB(), scCode);
-                alert.showDialog(MainActivity.this);
+                ViewDialog codePopup = new ViewDialog(thisId, scheduleName, false, rgbCodes[0], rgbCodes[1], rgbCodes[2]);
+                codePopup.setCode(scCode);
+                codePopup.showDialog(MainActivity.this);
             });
             arrDeletes.get(count).setOnClickListener(view -> {
-                ViewDialog alert = new ViewDialog(thisId, scheduleName, true, cc.getTextR(), cc.getTextG(), cc.getTextB());
-                alert.showDialog(MainActivity.this);
+                ViewDialog deletePopup = new ViewDialog(thisId, scheduleName, true, rgbCodes[0], rgbCodes[1], rgbCodes[2]);
+                deletePopup.showDialog(MainActivity.this);
             });
 
             int finalColor_R = cc.getBgR();
@@ -457,13 +446,7 @@ public class MainActivity extends AppCompatActivity {
             this.colorG = cG;
             this.colorB = cB;
         }
-        public ViewDialog(int thisId, String scheduleName, boolean isDelete, int cR, int cG, int cB, String schCode) {
-            this.thisId = thisId;
-            this.scheduleName = scheduleName;
-            this.isDelete = isDelete;
-            this.colorR = cR;
-            this.colorG = cG;
-            this.colorB = cB;
+        void setCode(String schCode){
             this.schCode = schCode;
         }
 
@@ -501,11 +484,10 @@ public class MainActivity extends AppCompatActivity {
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 TextView itemName = dialog.findViewById(R.id.itemName);
                 TextView itemLink = dialog.findViewById(R.id.itemLink);
-                itemName.setText("- "+scheduleName+" -");
+                itemName.setText(scheduleName);
                 itemLink.setText(schCode);
-                int myColor = ContextCompat.getColor(getApplicationContext(), R.color.blueblue);
+
                 itemName.setTextColor(Color.argb(255, colorR, colorG, colorB));
-                itemLink.setTextColor(myColor);
                 CardView cv = dialog.findViewById(R.id.cardV);
                 cv.setBackground(getDrawable(R.drawable.rounded_box));
                 FrameLayout mDialogNo = dialog.findViewById(R.id.frmNo);

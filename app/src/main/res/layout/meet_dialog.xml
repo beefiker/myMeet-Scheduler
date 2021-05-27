@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="meet"
-                android:textSize="12sp"
+                android:textSize="15sp"
                 android:layout_marginTop="0dp"
                 android:layout_gravity="center"
                 android:textStyle="bold"
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp">
             <TextView

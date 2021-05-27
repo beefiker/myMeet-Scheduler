@@ -3,4 +3,4 @@
 
 ##  About this application
 
-[My Develop Note on Notion](https://www.notion.so/GoogleMeetSchedulerApplication-30a0b4368e134334b91b311f59ec0eb4)
+[My Develop Note on Notion](https://www.notion.so/GoogleMeetSchedule-InProgress-8d245e60dc8a48258e256cc40ee184f7)
