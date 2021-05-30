@@ -254,9 +254,12 @@ public class AddActivity extends AppCompatActivity {
                         editCode.setText(null);
                     }
 
+                    String schName = editName.getText().toString();
+                    schName = schName.replaceAll("'", "`");
+
                     sqlDB = myHelper.getWritableDatabase();
                     String tmp = hourMin[0] + ":"+ hourMin[1];
-                    sqlDB.execSQL("insert into scheduleTable(id, day, course, code, alarmTime, activation) values ('"+ idm + "','"+ selectedDay + "','"+ editName.getText().toString() + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+true+"');");
+                    sqlDB.execSQL("insert into scheduleTable(id, day, course, code, alarmTime, activation) values ('"+ idm + "','"+ selectedDay + "','"+ schName + "','"+editCode.getText().toString()+"', '"+ tmp +"', '"+true+"');");
                     sqlDB.execSQL("insert into alarmDetailTable(id, date, alarmbefore) values ('"+ idm + "','"+ newForm + "','"+selectedAlarmBefore+"');");
                     sqlDB.close();
                     openMain();
@@ -266,10 +269,10 @@ public class AddActivity extends AppCompatActivity {
                     textInputLayout3.setError("Set Time for Alarm");
                 }else if(editName.getText().toString().equals("") && editName.getText().toString().length() < 1){
                     textInputLayout1.setError("Enter The Subject Name");
-                    Toast.makeText(AddActivity.this, "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddActivity.this, "Please Set Name", Toast.LENGTH_SHORT).show();
                 }else if(editTime.getText().toString().equals("") && editTime.getText().toString().length() < 1){
                     textInputLayout3.setError("Set Time for Alarm");
-                    Toast.makeText(AddActivity.this, "시간을 설정해주세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddActivity.this, "Please Set Time", Toast.LENGTH_SHORT).show();
                 }
             }
 

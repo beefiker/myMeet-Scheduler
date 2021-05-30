@@ -431,9 +431,11 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             Date mDate = new Date(now);
             @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String getTime = simpleDateFormat.format(mDate);
+            String content = editContent.getText().toString();
+            content = content.replaceAll("'", "`");
             if(editContent.getText().toString().length() > 0) {
                 sqlDB = myHelper.getWritableDatabase();
-                sqlDB.execSQL("insert into memoTable(num, content, regdate) values ('" + STATIC_ID + "','" + editContent.getText().toString() + "', '" + getTime + "');");
+                sqlDB.execSQL("insert into memoTable(num, content, regdate) values ('" + STATIC_ID + "','" + content + "', '" + getTime + "');");
                 sqlDB.close();
                 showMemos();
                 editContent.setText(null);
