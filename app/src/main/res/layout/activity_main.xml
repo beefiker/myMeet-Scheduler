@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -19,8 +20,9 @@
             android:background="#f1f3f5"
             android:layout_width="match_parent"
             android:layout_gravity="left"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="RtlHardcoded">
         </LinearLayout>
     </ScrollView>
     <com.google.android.gms.ads.AdView
@@ -32,7 +34,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id_for_test">
+        ads:adUnitId="@string/banner_ad_unit_id">
 
     </com.google.android.gms.ads.AdView>
 </LinearLayout>

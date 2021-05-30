@@ -1,4 +1,4 @@
-package com.example.googlemeetscheduler;
+package com.example.meetscheduler;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
@@ -37,6 +37,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bee.meetscheduler.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

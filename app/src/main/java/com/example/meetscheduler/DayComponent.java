@@ -1,4 +1,4 @@
-package com.example.googlemeetscheduler;
+package com.example.meetscheduler;
 
 public class DayComponent {
     private int alpha, textR, textG, textB, bgR, bgG, bgB;

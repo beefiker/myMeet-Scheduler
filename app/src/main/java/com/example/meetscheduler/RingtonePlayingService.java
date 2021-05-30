@@ -1,4 +1,4 @@
-package com.example.googlemeetscheduler;
+package com.example.meetscheduler;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import com.bee.meetscheduler.R;
 
 public class RingtonePlayingService extends Service {
 

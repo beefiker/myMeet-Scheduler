@@ -1,7 +1,6 @@
-package com.example.googlemeetscheduler;
+package com.example.meetscheduler;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +30,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bee.meetscheduler.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;

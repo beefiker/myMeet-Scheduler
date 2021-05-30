@@ -1,4 +1,4 @@
-package com.example.googlemeetscheduler;
+package com.example.meetscheduler;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 

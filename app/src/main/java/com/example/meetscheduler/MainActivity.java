@@ -1,4 +1,4 @@
-package com.example.googlemeetscheduler;
+package com.example.meetscheduler;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -7,7 +7,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -43,11 +42,10 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.bee.meetscheduler.R;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textview = new TextView(getApplicationContext());
         ActionBar.LayoutParams actionLayoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
         textview.setLayoutParams(actionLayoutParams);
-        textview.setText("GoogleMeetScheduler");
+        textview.setText("Meet Scheduler");
         textview.setTextColor(R.color.darkyButNotDark);
         textview.setTypeface(sCoreDreams[2], Typeface.BOLD);
         textview.setTextSize(19);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.googlemeetscheduler">
+    package="com.bee.meetscheduler">
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -9,9 +9,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_googlemeetscheduler"
+        android:icon="@mipmap/ic_meetscheduler"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_googlemeetscheduler_round"
+        android:roundIcon="@mipmap/ic_meetscheduler_round"
         android:supportsRtl="true"
         android:debuggable="false"
         android:theme="@style/Theme.AppCompat"
@@ -20,7 +20,7 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/admob_app_id"/>
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.meetscheduler.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,14 +28,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".AddActivity"
+        <activity android:name="com.example.meetscheduler.AddActivity"
             android:theme="@style/Theme.AppCompat"/>
 
-        <activity android:name=".DetailActivity" android:label="detail" />
+        <activity android:name="com.example.meetscheduler.DetailActivity" android:label="detail" />
 
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name="com.example.meetscheduler.AlarmReceiver" />
         <service
-            android:name=".RingtonePlayingService"
+            android:name="com.example.meetscheduler.RingtonePlayingService"
             android:enabled="true" />
     </application>
 
