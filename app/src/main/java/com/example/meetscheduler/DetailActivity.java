@@ -48,13 +48,6 @@ import java.util.regex.Pattern;
 
 public class DetailActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
 {
-    final static int SUNDAY = 1;
-    final static int MONDAY = 2;
-    final static int TUESDAY = 3;
-    final static int WEDNESDAY = 4;
-    final static int THURSDAY = 5;
-    final static int FRIDAY = 6;
-    final static int SATURDAY = 7;
     final static int Before0 = 0;
     final static int Before5 = 5;
     final static int Before10 = 10;
@@ -186,22 +179,22 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
         alarmCursor.close();
         switch (alarmBefore){
             case 0:
-                alarmBefore = 0;
+                alarmBefore = ALARMBEFORE.ZERO.ordinal();
                 break;
             case 5:
-                alarmBefore = 1;
+                alarmBefore = ALARMBEFORE.FIVE_MINUTE.ordinal();
                 break;
             case 10:
-                alarmBefore = 2;
+                alarmBefore = ALARMBEFORE.TEN_MINUTE.ordinal();
                 break;
             case 15:
-                alarmBefore = 3;
+                alarmBefore = ALARMBEFORE.FIFTEEN_MINUTE.ordinal();
                 break;
             case 30:
-                alarmBefore = 4;
+                alarmBefore = ALARMBEFORE.THIRTY_MINUTE.ordinal();
                 break;
             default:
-                alarmBefore = 5;
+                alarmBefore = ALARMBEFORE.ONE_HOUR.ordinal();
                 break;
         }
         alarmSpinner.setSelection(alarmBefore);
@@ -219,25 +212,25 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
 
         switch (day){
             case 1:
-                day = 6;
+                day = WEEKS.SUNDAY.ordinal();
                 break;
             case 2:
-                day = 0;
+                day = WEEKS.MONDAY.ordinal();
                 break;
             case 3:
-                day = 1;
+                day = WEEKS.TUESDAY.ordinal();
                 break;
             case 4:
-                day = 2;
+                day = WEEKS.WEDNESDAY.ordinal();
                 break;
             case 5:
-                day = 3;
+                day = WEEKS.THURSDAY.ordinal();
                 break;
             case 6:
-                day = 4;
+                day = WEEKS.FRIDAY.ordinal();
                 break;
             default:
-                day = 5;
+                day = WEEKS.SATURDAY.ordinal();
                 break;
         }
         daySpinner.setSelection(day);
@@ -311,57 +304,36 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             timePickerDialog.show();
         });
 
-        switch (nDay){
-            case 1:
-                nDay = 6;
-                break;
-            case 2:
-                nDay = 0;
-                break;
-            case 3:
-                nDay = 1;
-                break;
-            case 4:
-                nDay = 2;
-                break;
-            case 5:
-                nDay = 3;
-                break;
-            case 6:
-                nDay = 4;
-                break;
-            case 7:
-                nDay = 5;
-                break;
-        }
-
-        final int dbDay = nDay;
+        final int dbDay = day;
         btnUpdate.setOnClickListener(view -> {
             String updateName = editName.getText().toString();
             String updateCode = editCode.getText().toString();
             boolean updateAct = !editActivation.getText().toString().equals("false");
+
             int updateDay = daySpinner.getSelectedItemPosition();
-            switch(updateDay){
-                case 6:
-                    updateDay = SUNDAY;
+
+            WEEKS theDay = WEEKS.values()[updateDay];
+            switch(theDay){
+                case SUNDAY:
+                    updateDay = 1;
                     break;
-                case 0:
-                    updateDay = MONDAY;
+                case MONDAY:
+                    updateDay = 2;
                     break;
-                case 1:
-                    updateDay = TUESDAY;
+                case TUESDAY:
+                    updateDay = 3;
                     break;
-                case 2:
-                    updateDay = WEDNESDAY;
+                case WEDNESDAY:
+                    updateDay = 4;
                     break;
-                case 3:
-                    updateDay = THURSDAY;
+                case THURSDAY:
+                    updateDay = 5;
                     break;
-                case 4:
-                    updateDay = FRIDAY;
+                case FRIDAY:
+                    updateDay = 6;
                     break;
                 default:
-                    updateDay = SATURDAY;
+                    updateDay = 7;
                     break;
             }
             String[] hourMin = editTime.getText().toString().split(":");

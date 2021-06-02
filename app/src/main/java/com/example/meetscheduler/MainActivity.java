@@ -329,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
                     cc.setBackgroundColors(255, 255, 198, 255);
                     cc.setDay("SAT");
                     break;
+                case SUNDAY:
                 default:
                     cc.setTextColors(255,231, 57, 70);
                     cc.setBackgroundColors(255, 255, 173, 173);
