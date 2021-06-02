@@ -205,11 +205,8 @@ public class AddActivity extends AppCompatActivity {
                     int nowHour = calendar.get(Calendar.HOUR);
                     int nowMinute = calendar.get(Calendar.MINUTE);
 
-                    boolean isLeap = (nowYear % 4 == 0 && nowYear % 100 != 0) || nowYear % 400 == 0;
-                    // sync with myDB day  column format ( 0: mon, 1: tue, 2: wed, ... 6: sun);
-                    if(isLeap){
-                        dayCounts[1] += 1;
-                    }
+                    DaysInMonth daysInMonth = new DaysInMonth();
+                    daysInMonth.checkLeap(nowYear);
 
                     String[] hourMin = editTime.getText().toString().split(":");
                     if(hourMin[0].length() < 2) hourMin[0] = "0"+hourMin[0];
@@ -224,7 +221,6 @@ public class AddActivity extends AppCompatActivity {
                             if(nowHourMin[0] != 0){
                                 nowDayOfMonth += 7;
                             }
-
                         }else if(nowHourMin[0] == nowHour){
                             if(nowHourMin[1] < nowMinute){
                                 if(nowHourMin[1] != 0) {
@@ -234,8 +230,8 @@ public class AddActivity extends AppCompatActivity {
                         }
                     }
 
-                    if(nowDayOfMonth > dayCounts[nowMonth-1]){
-                       nowDayOfMonth = nowDayOfMonth - dayCounts[nowMonth-1];
+                    if(nowDayOfMonth > daysInMonth.getDays(nowMonth-1)){
+                       nowDayOfMonth = nowDayOfMonth - daysInMonth.getDays(nowMonth-1);
                        if(nowMonth>12){
                            nowYear++;
                            nowMonth -= 12;
