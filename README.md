@@ -3,6 +3,8 @@
 
 ##  About this application
 
+[On PlayStore](https://play.google.com/store/apps/details?id=com.bee.meetscheduler)
+
 [My Develop Note on Notion](https://www.notion.so/GoogleMeetSchedule-InProgress-8d245e60dc8a48258e256cc40ee184f7)
 
 ## Icons
