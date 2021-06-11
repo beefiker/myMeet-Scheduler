@@ -56,6 +56,9 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class MainActivity extends AppCompatActivity {
 
     final static int SUNDAY = 1;
@@ -188,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
         layoutContainer.removeAllViews();
         sqlDB = myHelper.getReadableDatabase();
         Cursor cursor = sqlDB.rawQuery("select * from scheduleTable order by day, alarmTime", null);
-//        Cursor cursor = sqlDB.rawQuery("select * from scheduleTable as st inner join alarmDetailTable as at on st.id = at.id order by date", null);
 
         while(cursor.moveToNext()){
 
@@ -447,11 +449,13 @@ public class MainActivity extends AppCompatActivity {
         return Pattern.matches("^[0-9a-zA-z]*$", s);
     }
 
+    @Getter
+    @Setter
     public class ViewDialog {
-        int thisId, colorR, colorG, colorB;
-        String scheduleName;
-        boolean isDelete;
-        String schCode;
+        private int thisId, colorR, colorG, colorB;
+        private String scheduleName;
+        private boolean isDelete;
+        private String schCode;
         public ViewDialog(int thisId, String scheduleName, boolean isDelete, int cR, int cG, int cB) {
             this.thisId = thisId;
             this.scheduleName = scheduleName;
